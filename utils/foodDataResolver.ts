@@ -1,6 +1,9 @@
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Types for the FoodDataResolver module
+// FoodDataResolver v1.1.0 - OpenFoodFacts compliant implementation
+// Respects ODbL license, rate limits, and User-Agent requirements
+
 export interface FoodData {
   product_name: string;
   brand: string;
@@ -24,30 +27,104 @@ export interface ResolverResult {
   trust_score?: number;
   incomplete_flag?: boolean;
   error?: string;
+  attribution?: string;
 }
 
 interface APISource {
   name: string;
   access: string;
-  url: string;
-  doc: string;
+  url_template: string;
+  policy?: {
+    license?: string;
+    attribution_required?: boolean;
+    share_alike?: boolean;
+    user_agent?: string;
+    rate_limits?: {
+      product_reads?: number;
+      search?: number;
+      facet?: number;
+      ban_on_exceed?: boolean;
+    };
+    rate_limit_per_ip_per_hour?: number;
+  };
   notes: string;
   resolver: (barcode: string) => Promise<ResolverResult>;
 }
 
-// Cache for frequent lookups
+// Cache for frequent lookups with persistent storage
 const foodCache = new Map<string, { data: ResolverResult; timestamp: number }>();
 const CACHE_VALIDITY_DAYS = 30;
 const CACHE_VALIDITY_MS = CACHE_VALIDITY_DAYS * 24 * 60 * 60 * 1000;
+
+// Rate limiting for OpenFoodFacts compliance
+const rateLimiter = {
+  productReads: { count: 0, resetTime: Date.now() + 60000 }, // 100/min
+  searches: { count: 0, resetTime: Date.now() + 60000 }, // 10/min
+  facets: { count: 0, resetTime: Date.now() + 60000 } // 2/min
+};
+
+// User-Agent header as required by OpenFoodFacts
+const USER_AGENT = 'SugarTracker/1.1.0 (contact@sugartracker.app)';
+
+// Load cache from persistent storage
+const loadCacheFromStorage = async (): Promise<void> => {
+  try {
+    const stored = await AsyncStorage.getItem('foodDataCache');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      Object.entries(parsed).forEach(([key, value]: [string, any]) => {
+        if (Date.now() - value.timestamp < CACHE_VALIDITY_MS) {
+          foodCache.set(key, value);
+        }
+      });
+    }
+  } catch (error) {
+    console.warn('[FoodDataResolver] Failed to load cache from storage:', error);
+  }
+};
+
+// Save cache to persistent storage
+const saveCacheToStorage = async (): Promise<void> => {
+  try {
+    const cacheObject = Object.fromEntries(foodCache.entries());
+    await AsyncStorage.setItem('foodDataCache', JSON.stringify(cacheObject));
+  } catch (error) {
+    console.warn('[FoodDataResolver] Failed to save cache to storage:', error);
+  }
+};
+
+// Check and update rate limits
+const checkRateLimit = (type: 'productReads' | 'searches' | 'facets'): boolean => {
+  const now = Date.now();
+  const limiter = rateLimiter[type];
+  
+  if (now > limiter.resetTime) {
+    limiter.count = 0;
+    limiter.resetTime = now + 60000; // Reset every minute
+  }
+  
+  const limits = { productReads: 100, searches: 10, facets: 2 };
+  
+  if (limiter.count >= limits[type]) {
+    console.warn(`[FoodDataResolver] Rate limit exceeded for ${type}`);
+    return false;
+  }
+  
+  limiter.count++;
+  return true;
+};
+
+// Initialize cache loading
+loadCacheFromStorage();
 
 // Quality scoring function
 const calculateTrustScore = (data: Partial<FoodData>, source: string): number => {
   let score = 0.5; // Base score
   
-  // Source reliability weights
+  // Source reliability weights (updated for v1.1.0)
   const sourceWeights: Record<string, number> = {
     'USDA FoodData Central': 0.95,
-    'Open Food Facts API': 0.85,
+    'OpenFoodFacts': 0.85,
     'Edamam Food Database': 0.90,
     'FatSecret Platform': 0.80,
     'Go-UPC API': 0.70,
@@ -95,11 +172,25 @@ const parseIngredients = (ingredientsStr: string): string[] => {
     .map(ingredient => ingredient.replace(/^[\(\[]|[\)\]]$/g, '').trim());
 };
 
-// API Resolvers
+// API Resolvers with proper compliance
 const openFoodFactsResolver = async (barcode: string): Promise<ResolverResult> => {
   try {
+    // Check rate limits before making request
+    if (!checkRateLimit('productReads')) {
+      return { success: false, error: 'OpenFoodFacts rate limit exceeded. Please wait.' };
+    }
+    
     console.log(`[OpenFoodFacts] Looking up barcode: ${barcode}`);
-    const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+    
+    // Use v2 API with specific fields as per new specification
+    const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=product_name,brands,ingredients_text,nutriments`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': USER_AGENT, // Required by OpenFoodFacts policy
+        'Accept': 'application/json'
+      }
+    });
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
@@ -114,10 +205,16 @@ const openFoodFactsResolver = async (barcode: string): Promise<ResolverResult> =
     const product = data.product;
     const nutriments = product.nutriments || {};
     
+    // Ensure ingredients are available (required for MetaSweet processing)
+    const ingredientsText = product.ingredients_text || product.ingredients_text_en || '';
+    if (!ingredientsText) {
+      console.warn(`[OpenFoodFacts] Missing ingredients for ${barcode}, flagging as incomplete`);
+    }
+    
     const foodData: FoodData = {
       product_name: product.product_name || product.product_name_en || 'Unknown Product',
       brand: product.brands || 'Unknown Brand',
-      ingredients: parseIngredients(product.ingredients_text || product.ingredients_text_en || ''),
+      ingredients: parseIngredients(ingredientsText),
       nutrition_facts: {
         total_carbs_g: nutriments.carbohydrates_100g || nutriments.carbohydrates || 0,
         fiber_g: nutriments.fiber_100g || nutriments.fiber || 0,
@@ -129,31 +226,36 @@ const openFoodFactsResolver = async (barcode: string): Promise<ResolverResult> =
       serving_size_g: parseFloat(product.serving_size) || 100
     };
     
-    const trust_score = calculateTrustScore(foodData, 'Open Food Facts API');
-    const incomplete_flag = isIncomplete(foodData);
+    const trust_score = calculateTrustScore(foodData, 'OpenFoodFacts');
+    const incomplete_flag = isIncomplete(foodData) || !ingredientsText;
     
-    console.log(`[OpenFoodFacts] Found: ${foodData.product_name} (trust: ${trust_score})`);
+    console.log(`[OpenFoodFacts] Found: ${foodData.product_name} (trust: ${trust_score}, incomplete: ${incomplete_flag})`);
     
     return {
       success: true,
       foodData,
-      source: 'Open Food Facts API',
+      source: 'OpenFoodFacts',
       trust_score,
-      incomplete_flag
+      incomplete_flag,
+      attribution: 'Data from Open Food Facts (ODbL license)'
     };
   } catch (error) {
     console.error('[OpenFoodFacts] Error:', error);
-    return { success: false, error: `Open Food Facts API error: ${error}` };
+    return { success: false, error: `OpenFoodFacts API error: ${error}` };
   }
 };
 
 const usdaFoodDataResolver = async (barcode: string): Promise<ResolverResult> => {
   try {
     console.log(`[USDA] Looking up barcode: ${barcode}`);
-    // Note: USDA FoodData Central doesn't have direct barcode lookup
-    // This would require an API key and keyword-based search
-    // For now, we'll return a not found result
-    return { success: false, error: 'USDA FoodData Central requires keyword search, not barcode lookup' };
+    
+    // USDA FoodData Central doesn't support direct barcode lookup
+    // Would need to implement keyword search with API key
+    // For now, return not implemented
+    return { 
+      success: false, 
+      error: 'USDA FoodData Central requires API key and keyword search implementation' 
+    };
   } catch (error) {
     console.error('[USDA] Error:', error);
     return { success: false, error: `USDA API error: ${error}` };
@@ -163,9 +265,13 @@ const usdaFoodDataResolver = async (barcode: string): Promise<ResolverResult> =>
 const edamamResolver = async (barcode: string): Promise<ResolverResult> => {
   try {
     console.log(`[Edamam] Looking up barcode: ${barcode}`);
-    // Note: Edamam requires API credentials
-    // This is a placeholder implementation
-    return { success: false, error: 'Edamam API requires authentication credentials' };
+    
+    // Edamam requires API credentials (app_id and app_key)
+    // Would need environment variables: EDAMAM_APP_ID, EDAMAM_API_KEY
+    return { 
+      success: false, 
+      error: 'Edamam API requires app_id and app_key credentials' 
+    };
   } catch (error) {
     console.error('[Edamam] Error:', error);
     return { success: false, error: `Edamam API error: ${error}` };
@@ -328,77 +434,65 @@ const mockDatabaseResolver = async (barcode: string): Promise<ResolverResult> =>
   };
 };
 
-// API Priority Fallback Configuration
+// API Priority Fallback Configuration (v1.1.0 compliant)
 const API_SOURCES: APISource[] = [
   {
-    name: 'Open Food Facts API',
-    access: 'free',
-    url: 'https://world.openfoodfacts.org/api/v0/product/{barcode}.json',
-    doc: 'https://openfoodfacts.github.io/openfoodfacts-server/api/',
-    notes: 'Community-powered. Ideal for open-source integration.',
+    name: 'OpenFoodFacts',
+    access: 'open',
+    url_template: 'https://world.openfoodfacts.org/api/v2/product/{barcode}.json?fields=product_name,brands,ingredients_text,nutriments',
+    policy: {
+      license: 'ODbL',
+      attribution_required: true,
+      share_alike: true,
+      user_agent: USER_AGENT,
+      rate_limits: {
+        product_reads: 100,
+        search: 10,
+        facet: 2,
+        ban_on_exceed: true
+      }
+    },
+    notes: 'Primary source; includes ingredients_text for MetaSweet; respects user-agent and caching.',
     resolver: openFoodFactsResolver
   },
   {
     name: 'USDA FoodData Central',
-    access: 'free (with API key)',
-    url: 'https://api.nal.usda.gov/fdc/v1/foods/search',
-    doc: 'https://fdc.nal.usda.gov/api-guide',
-    notes: 'Government-grade data. Keyword-based search only.',
+    access: 'free with API key',
+    url_template: 'https://api.nal.usda.gov/fdc/v1/foods/search?query={barcode_or_name}&api_key={USDA_API_KEY}',
+    policy: {
+      license: 'CC0',
+      rate_limit_per_ip_per_hour: 1000,
+      attribution_required: true
+    },
+    notes: 'Fallback if OFF fails or data incomplete.',
     resolver: usdaFoodDataResolver
   },
   {
     name: 'Edamam Food Database',
     access: 'freemium',
-    url: 'https://api.edamam.com/api/food-database/v2/parser',
-    doc: 'https://developer.edamam.com/food-database-api-docs',
-    notes: 'Highly curated. Requires API credentials.',
+    url_template: 'https://api.edamam.com/api/food-database/v2/parser?upc={barcode}&app_id={EDAMAM_APP_ID}&app_key={EDAMAM_API_KEY}',
+    notes: 'Used when OFF results missing or incomplete ingredients.',
     resolver: edamamResolver
-  },
-  {
-    name: 'FatSecret Platform',
-    access: 'freemium',
-    url: 'https://platform.fatsecret.com/docs/v1/food.find_id_for_barcode',
-    doc: 'https://platform.fatsecret.com/',
-    notes: 'Broad database. Requires OAuth authentication.',
-    resolver: fatSecretResolver
-  },
-  {
-    name: 'Go-UPC API',
-    access: 'free trial (1000 requests)',
-    url: 'https://go-upc.com/api/v1/barcode/{barcode}',
-    doc: 'https://go-upc.com/docs/python-barcode-api-lookup',
-    notes: 'Retail-centric. Requires API key.',
-    resolver: goUpcResolver
-  },
-  {
-    name: 'Barcode Lookup API',
-    access: 'trial/commercial',
-    url: 'https://api.barcodelookup.com/v2/products',
-    doc: 'https://www.barcodelookup.com/api',
-    notes: 'Includes product photos and pricing. Requires API key.',
-    resolver: barcodeLookupResolver
   },
   {
     name: 'Mock Database',
     access: 'free',
-    url: 'local',
-    doc: 'internal',
+    url_template: 'local',
     notes: 'Fallback for demo purposes.',
     resolver: mockDatabaseResolver
   }
 ];
 
-// Main resolver function
+// Main resolver function with enhanced compliance
 export const resolveFoodData = async (barcode: string): Promise<ResolverResult> => {
-  console.log(`[FoodDataResolver] Starting resolution for barcode: ${barcode}`);
+  console.log(`[FoodDataResolver v1.1.0] Starting resolution for barcode: ${barcode}`);
   
-  // Validate barcode format
-  const barcodeFormats = ['UPC-A', 'EAN-13', 'GTIN-13', 'GTIN-8'];
-  if (!barcode || barcode.length < 8 || barcode.length > 14) {
-    return { success: false, error: 'Invalid barcode format' };
+  // Validate barcode format (UPC-A, EAN-13, GTIN-13, GTIN-8)
+  if (!barcode || !/^\d{8,14}$/.test(barcode)) {
+    return { success: false, error: 'Invalid barcode format. Must be 8-14 digits.' };
   }
   
-  // Check cache first
+  // Check cache first (respects 30-day TTL)
   const cacheKey = `barcode_${barcode}`;
   const cached = foodCache.get(cacheKey);
   
@@ -407,24 +501,28 @@ export const resolveFoodData = async (barcode: string): Promise<ResolverResult> 
     return cached.data;
   }
   
-  // Try each API source in priority order
+  // Try each API source in priority order with fallback logic
   for (const source of API_SOURCES) {
     try {
       console.log(`[FoodDataResolver] Trying ${source.name}...`);
       const result = await source.resolver(barcode);
       
-      if (result.success && result.foodData && result.trust_score) {
-        // Check if result meets quality threshold
-        if (result.trust_score >= 0.8 && !result.incomplete_flag) {
+      if (result.success && result.foodData && result.trust_score !== undefined) {
+        // Enhanced quality check: trust_score >= 0.8 AND ingredients available
+        const hasIngredients = result.foodData.ingredients && result.foodData.ingredients.length > 0;
+        const meetsThreshold = result.trust_score >= 0.8 && !result.incomplete_flag && hasIngredients;
+        
+        if (meetsThreshold) {
           console.log(`[FoodDataResolver] Success with ${source.name} (trust: ${result.trust_score})`);
           
-          // Cache the result
+          // Cache the result and persist to storage
           foodCache.set(cacheKey, { data: result, timestamp: Date.now() });
+          saveCacheToStorage(); // Async, non-blocking
           
           return result;
         } else {
-          console.log(`[FoodDataResolver] ${source.name} result below threshold (trust: ${result.trust_score}, incomplete: ${result.incomplete_flag})`);
-          // Continue to next source
+          console.log(`[FoodDataResolver] ${source.name} result below threshold (trust: ${result.trust_score}, incomplete: ${result.incomplete_flag}, ingredients: ${hasIngredients})`);
+          // Continue to next source for better data
         }
       } else {
         console.log(`[FoodDataResolver] ${source.name} failed: ${result.error}`);
@@ -440,23 +538,44 @@ export const resolveFoodData = async (barcode: string): Promise<ResolverResult> 
   console.log(`[FoodDataResolver] All sources failed for barcode: ${barcode}`);
   return {
     success: false,
-    error: 'Unable to resolve food data from any source'
+    error: 'Unable to resolve food data from any source. Please try manual entry.'
   };
 };
 
-// Utility function to clear cache (for testing/debugging)
-export const clearFoodCache = (): void => {
+// Utility functions
+export const clearFoodCache = async (): Promise<void> => {
   foodCache.clear();
-  console.log('[FoodDataResolver] Cache cleared');
+  await AsyncStorage.removeItem('foodDataCache');
+  console.log('[FoodDataResolver] Cache cleared from memory and storage');
 };
 
-// Utility function to get cache stats
-export const getCacheStats = (): { size: number; entries: string[] } => {
+export const getCacheStats = (): { size: number; entries: string[]; rateLimits: typeof rateLimiter } => {
   return {
     size: foodCache.size,
-    entries: Array.from(foodCache.keys())
+    entries: Array.from(foodCache.keys()),
+    rateLimits: rateLimiter
   };
+};
+
+// Get attribution text for UI display (ODbL compliance)
+export const getAttributionText = (): string => {
+  return 'Food data provided by Open Food Facts (ODbL license). This app shares data improvements back to the community.';
+};
+
+// Manual cache warming for common products
+export const warmCache = async (barcodes: string[]): Promise<void> => {
+  console.log(`[FoodDataResolver] Warming cache for ${barcodes.length} products`);
+  
+  for (const barcode of barcodes) {
+    try {
+      await resolveFoodData(barcode);
+      // Small delay to respect rate limits
+      await new Promise(resolve => setTimeout(resolve, 100));
+    } catch (error) {
+      console.warn(`[FoodDataResolver] Failed to warm cache for ${barcode}:`, error);
+    }
+  }
 };
 
 // Export types and constants for external use
-export { API_SOURCES, CACHE_VALIDITY_DAYS };
+export { API_SOURCES, CACHE_VALIDITY_DAYS, USER_AGENT };
