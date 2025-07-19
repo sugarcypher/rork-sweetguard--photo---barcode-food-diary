@@ -52,14 +52,29 @@ export default function WelcomeScreen() {
         <Text style={styles.appName}>SugarCypher</Text>
         
         <View style={styles.taglineContainer}>
-          <Text style={styles.tagline}>Discover the hidden sugar in your food</Text>
-          <Text style={styles.taglineEmphasis}>Before it discovers you.</Text>
+          <Text style={styles.tagline}>The average person consumes 17 teaspoons of hidden sugar daily</Text>
+          <Text style={styles.taglineEmphasis}>We'll help you cut that in half.</Text>
+        </View>
+        
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>2M+</Text>
+            <Text style={styles.statLabel}>Foods Analyzed</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>40%</Text>
+            <Text style={styles.statLabel}>Sugar Reduction</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>95%</Text>
+            <Text style={styles.statLabel}>Accuracy Rate</Text>
+          </View>
         </View>
         
         <View style={styles.featuresPreview}>
-          <Text style={styles.featureText}>🔍 Scan any food instantly</Text>
-          <Text style={styles.featureText}>🧠 AI-powered sugar analysis</Text>
-          <Text style={styles.featureText}>⚡ Real-time health alerts</Text>
+          <Text style={styles.featureText}>🔍 Instant barcode & photo scanning</Text>
+          <Text style={styles.featureText}>🧠 MetaSweet™ hidden sugar detection</Text>
+          <Text style={styles.featureText}>⚡ Personalized health recommendations</Text>
         </View>
         
         <TouchableOpacity 
@@ -137,6 +152,29 @@ const styles = StyleSheet.create({
     color: '#00D4FF',
     textAlign: 'center',
     fontWeight: '600',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 30,
+    paddingHorizontal: 10,
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statNumber: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#00D4FF',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#8892B0',
+    textAlign: 'center',
+    fontWeight: '500',
   },
   featuresPreview: {
     marginBottom: 50,

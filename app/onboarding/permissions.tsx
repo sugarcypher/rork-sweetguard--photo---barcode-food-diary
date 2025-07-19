@@ -13,6 +13,7 @@ export default function PermissionsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [parentalMode, setParentalMode] = useState(false);
+  const [strictMode, setStrictMode] = useState(false);
   const { setShowTour } = useTourStore();
   
   const handleComplete = async () => {
@@ -66,6 +67,14 @@ export default function PermissionsScreen() {
       required: false,
       granted: parentalMode,
       onToggle: setParentalMode
+    },
+    {
+      icon: <Shield size={24} color="#FF6B6B" />,
+      title: "Strict Mode",
+      description: "Zero tolerance for hidden sugars. Get alerts for ANY sugar content above 2g per serving",
+      required: false,
+      granted: strictMode,
+      onToggle: setStrictMode
     }
   ];
   
@@ -75,9 +84,9 @@ export default function PermissionsScreen() {
       style={styles.container}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Setup Complete!</Text>
+        <Text style={styles.title}>Customize Your Experience</Text>
         <Text style={styles.subtitle}>
-          Configure these features to get the most out of SugarCypher
+          These settings will personalize SugarCypher to match your health goals and lifestyle preferences
         </Text>
         
         <View style={styles.permissionsContainer}>

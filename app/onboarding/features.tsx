@@ -20,21 +20,24 @@ export default function FeaturesScreen() {
   const features = [
     {
       icon: <Brain size={32} color="white" />,
-      title: "Smart Analysis",
-      description: "Instantly calculates true sugar impact using glycemic index and metabolic factors",
-      gradient: ['#667EEA', '#764BA2'] as const
+      title: "MetaSweet™ Technology",
+      description: "Our proprietary algorithm analyzes 47 different sugar compounds and calculates their metabolic impact on YOUR specific body chemistry. Goes beyond simple carb counting.",
+      gradient: ['#667EEA', '#764BA2'] as const,
+      stats: "47 sugar types detected"
     },
     {
       icon: <Eye size={32} color="white" />,
-      title: "Hidden Sugar Detection",
-      description: "Reveals disguised sugars like maltodextrin, corn syrup, and other sneaky ingredients",
-      gradient: ['#FF6B6B', '#FF8E53'] as const
+      title: "Stealth Sugar Scanner",
+      description: "Identifies 200+ hidden sugar aliases that food companies use to disguise sweeteners. From 'evaporated cane juice' to 'brown rice syrup' - we catch them all.",
+      gradient: ['#FF6B6B', '#FF8E53'] as const,
+      stats: "200+ sugar aliases"
     },
     {
       icon: <Shield size={32} color="white" />,
-      title: "Health Protection",
-      description: "Personalized alerts and healthier alternatives to keep you on track",
-      gradient: ['#4ECDC4', '#44A08D'] as const
+      title: "Personalized Protection",
+      description: "Real-time health alerts based on your diabetes risk, weight goals, and activity level. Get instant alternatives that match your taste preferences.",
+      gradient: ['#4ECDC4', '#44A08D'] as const,
+      stats: "Custom health profile"
     }
   ];
   
@@ -78,6 +81,7 @@ export default function FeaturesScreen() {
                 <View style={styles.textContainer}>
                   <Text style={styles.featureTitle}>{feature.title}</Text>
                   <Text style={styles.featureDescription}>{feature.description}</Text>
+                  <Text style={styles.featureStats}>{feature.stats}</Text>
                 </View>
               </LinearGradient>
             </Animated.View>
@@ -168,6 +172,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
     lineHeight: 20,
+    marginBottom: 8,
+  },
+  featureStats: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontWeight: '600',
+    fontStyle: 'italic',
   },
   cypherBadge: {
     alignSelf: 'center',

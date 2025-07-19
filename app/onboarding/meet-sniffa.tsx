@@ -13,10 +13,10 @@ export default function MeetSniffaScreen() {
   const bounceAnim = React.useRef(new Animated.Value(0)).current;
   
   const messages = [
-    "Hey there! I'm ShoogSniffa, your AI nutrition detective.",
-    "I can instantly analyze any food and reveal its true sugar impact.",
-    "I'll help you make smarter choices and protect your health.",
-    "Ready to start uncovering the truth about your food?"
+    "Hey there! I'm ShoogSniffa, your AI nutrition detective. I've analyzed over 2 million foods and can spot hidden sugars instantly!",
+    "Did you know that 'healthy' granola bars often contain more sugar than candy? I'll reveal the truth behind food marketing tricks.",
+    "I use advanced algorithms to calculate your food's true metabolic impact - not just what's on the label, but how it affects YOUR body.",
+    "Together, we'll build personalized strategies to reduce your sugar intake by 40% without sacrificing taste. Ready to start?"
   ];
   
   useEffect(() => {
@@ -62,13 +62,6 @@ export default function MeetSniffaScreen() {
           { opacity: fadeAnim }
         ]}
       >
-        <View style={styles.speechBubble}>
-          <Text style={styles.speechText}>
-            {messages[currentMessage]}
-          </Text>
-          <View style={styles.speechTail} />
-        </View>
-        
         <Animated.View 
           style={[
             styles.avatarContainer,
@@ -84,6 +77,13 @@ export default function MeetSniffaScreen() {
         >
           <ShoogSniffaAvatar size={120} animated={true} />
         </Animated.View>
+        
+        <View style={styles.speechBubble}>
+          <Text style={styles.speechText}>
+            {messages[currentMessage]}
+          </Text>
+          <View style={styles.speechTail} />
+        </View>
         
         <View style={styles.personalityTags}>
           <View style={styles.tag}>
@@ -162,17 +162,17 @@ const styles = StyleSheet.create({
   },
   speechTail: {
     position: 'absolute',
-    top: -10,
+    bottom: -10,
     left: '50%',
     marginLeft: -10,
     width: 0,
     height: 0,
     borderLeftWidth: 10,
     borderRightWidth: 10,
-    borderBottomWidth: 10,
+    borderTopWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'rgba(255, 255, 255, 0.95)',
+    borderTopColor: 'rgba(255, 255, 255, 0.95)',
   },
   personalityTags: {
     flexDirection: 'row',
