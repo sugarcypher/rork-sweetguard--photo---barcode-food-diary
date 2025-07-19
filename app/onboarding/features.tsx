@@ -20,20 +20,20 @@ export default function FeaturesScreen() {
   const features = [
     {
       icon: <Brain size={32} color="white" />,
-      title: "Raw Data (Cypher)",
-      description: "Molecular breakdowns, glycemic indices, and hidden ingredient analysis",
+      title: "Smart Analysis",
+      description: "Instantly calculates true sugar impact using glycemic index and metabolic factors",
       gradient: ['#667EEA', '#764BA2']
     },
     {
       icon: <Eye size={32} color="white" />,
-      title: "Street-Smart Breakdown (Sniffa)",
-      description: "Real talk about what's really in your food, no corporate BS",
+      title: "Hidden Sugar Detection",
+      description: "Reveals disguised sugars like maltodextrin, corn syrup, and other sneaky ingredients",
       gradient: ['#FF6B6B', '#FF8E53']
     },
     {
       icon: <Shield size={32} color="white" />,
-      title: "Guidance & Alerts (Guardian)",
-      description: "Protective warnings and healthier alternatives for your family",
+      title: "Health Protection",
+      description: "Personalized alerts and healthier alternatives to keep you on track",
       gradient: ['#4ECDC4', '#44A08D']
     }
   ];
@@ -49,7 +49,7 @@ export default function FeaturesScreen() {
           { opacity: fadeAnim }
         ]}
       >
-        <Text style={styles.title}>Every scan gives you...</Text>
+        <Text style={styles.title}>How SugarCypher Works</Text>
         
         <ScrollView style={styles.featuresContainer} showsVerticalScrollIndicator={false}>
           {features.map((feature, index) => (

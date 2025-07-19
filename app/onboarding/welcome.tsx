@@ -52,27 +52,14 @@ export default function WelcomeScreen() {
         <Text style={styles.appName}>SugarCypher</Text>
         
         <View style={styles.taglineContainer}>
-          <Text style={styles.tagline}>You're not just reading labels.</Text>
-          <Text style={styles.taglineEmphasis}>You're cracking codes.</Text>
+          <Text style={styles.tagline}>Discover the hidden sugar in your food</Text>
+          <Text style={styles.taglineEmphasis}>Before it discovers you.</Text>
         </View>
         
-        <View style={styles.glitchContainer}>
-          <Text style={styles.glitchText}>DECRYPTING SWEET LIES...</Text>
-          <View style={styles.loadingBar}>
-            <Animated.View 
-              style={[
-                styles.loadingFill,
-                {
-                  transform: [{
-                    scaleX: fadeAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, 1]
-                    })
-                  }]
-                }
-              ]} 
-            />
-          </View>
+        <View style={styles.featuresPreview}>
+          <Text style={styles.featureText}>🔍 Scan any food instantly</Text>
+          <Text style={styles.featureText}>🧠 AI-powered sugar analysis</Text>
+          <Text style={styles.featureText}>⚡ Real-time health alerts</Text>
         </View>
         
         <TouchableOpacity 
@@ -151,29 +138,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
   },
-  glitchContainer: {
+  featuresPreview: {
     marginBottom: 50,
     alignItems: 'center',
   },
-  glitchText: {
-    fontSize: 12,
-    color: '#00D4FF',
-    letterSpacing: 3,
-    marginBottom: 10,
-    fontFamily: 'monospace',
-  },
-  loadingBar: {
-    width: 200,
-    height: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 1,
-    overflow: 'hidden',
-  },
-  loadingFill: {
-    height: '100%',
-    width: '100%',
-    backgroundColor: '#00D4FF',
-    transformOrigin: 'left',
+  featureText: {
+    fontSize: 16,
+    color: '#8892B0',
+    textAlign: 'center',
+    marginBottom: 12,
+    fontWeight: '500',
   },
   continueButton: {
     width: '100%',

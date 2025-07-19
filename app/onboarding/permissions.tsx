@@ -34,31 +34,31 @@ export default function PermissionsScreen() {
     {
       icon: <Camera size={24} color="#00D4FF" />,
       title: "Camera Access",
-      description: "Scan barcodes and analyze food photos",
+      description: "Required to scan barcodes and analyze food packaging",
       required: true,
       granted: cameraPermission?.granted,
       onRequest: requestCameraPermission
     },
     {
       icon: <Bell size={24} color="#FF6B6B" />,
-      title: "Notifications",
-      description: "Get alerts when sugar limits are exceeded",
+      title: "Smart Notifications",
+      description: "Get personalized alerts about sugar intake and healthier alternatives",
       required: false,
       granted: notifications,
       onToggle: setNotifications
     },
     {
       icon: <Mic size={24} color="#4ECDC4" />,
-      title: "ShoogSniffa Voice",
-      description: "Enable voice commentary and responses",
+      title: "Voice Analysis",
+      description: "Describe food verbally for instant nutritional analysis",
       required: false,
       granted: voiceEnabled,
       onToggle: setVoiceEnabled
     },
     {
       icon: <Shield size={24} color="#FFD93D" />,
-      title: "Guardian Mode",
-      description: "Enhanced protection for family use",
+      title: "Family Protection",
+      description: "Enhanced safety features and kid-friendly explanations",
       required: false,
       granted: parentalMode,
       onToggle: setParentalMode
@@ -71,9 +71,9 @@ export default function PermissionsScreen() {
       style={styles.container}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Activate Your Cypher</Text>
+        <Text style={styles.title}>Setup Complete!</Text>
         <Text style={styles.subtitle}>
-          Set up permissions to unlock the full SugarCypher experience
+          Configure these features to get the most out of SugarCypher
         </Text>
         
         <View style={styles.permissionsContainer}>

@@ -13,10 +13,10 @@ export default function MeetSniffaScreen() {
   const bounceAnim = React.useRef(new Animated.Value(0)).current;
   
   const messages = [
-    "Yo, Shoog! Name's ShoogSniffa™.",
-    "I'm your AI sugar sleuth, ready to sniff out the sweet lies.",
-    "Together, we'll crack every sugar code they throw at us.",
-    "Ready to become the ultimate Sugar Cypher?"
+    "Hey there! I'm ShoogSniffa, your AI nutrition detective.",
+    "I can instantly analyze any food and reveal its true sugar impact.",
+    "I'll help you make smarter choices and protect your health.",
+    "Ready to start uncovering the truth about your food?"
   ];
   
   useEffect(() => {
@@ -62,6 +62,13 @@ export default function MeetSniffaScreen() {
           { opacity: fadeAnim }
         ]}
       >
+        <View style={styles.speechBubble}>
+          <Text style={styles.speechText}>
+            {messages[currentMessage]}
+          </Text>
+          <View style={styles.speechTail} />
+        </View>
+        
         <Animated.View 
           style={[
             styles.avatarContainer,
@@ -77,13 +84,6 @@ export default function MeetSniffaScreen() {
         >
           <ShoogSniffaAvatar size={120} animated={true} />
         </Animated.View>
-        
-        <View style={styles.speechBubble}>
-          <Text style={styles.speechText}>
-            {messages[currentMessage]}
-          </Text>
-          <View style={styles.speechTail} />
-        </View>
         
         <View style={styles.personalityTags}>
           <View style={styles.tag}>
@@ -162,17 +162,17 @@ const styles = StyleSheet.create({
   },
   speechTail: {
     position: 'absolute',
-    bottom: -10,
+    top: -10,
     left: '50%',
     marginLeft: -10,
     width: 0,
     height: 0,
     borderLeftWidth: 10,
     borderRightWidth: 10,
-    borderTopWidth: 10,
+    borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: 'rgba(255, 255, 255, 0.95)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.95)',
   },
   personalityTags: {
     flexDirection: 'row',
