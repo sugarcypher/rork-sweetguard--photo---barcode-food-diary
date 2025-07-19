@@ -22,19 +22,19 @@ export default function FeaturesScreen() {
       icon: <Brain size={32} color="white" />,
       title: "Smart Analysis",
       description: "Instantly calculates true sugar impact using glycemic index and metabolic factors",
-      gradient: ['#667EEA', '#764BA2']
+      gradient: ['#667EEA', '#764BA2'] as const
     },
     {
       icon: <Eye size={32} color="white" />,
       title: "Hidden Sugar Detection",
       description: "Reveals disguised sugars like maltodextrin, corn syrup, and other sneaky ingredients",
-      gradient: ['#FF6B6B', '#FF8E53']
+      gradient: ['#FF6B6B', '#FF8E53'] as const
     },
     {
       icon: <Shield size={32} color="white" />,
       title: "Health Protection",
       description: "Personalized alerts and healthier alternatives to keep you on track",
-      gradient: ['#4ECDC4', '#44A08D']
+      gradient: ['#4ECDC4', '#44A08D'] as const
     }
   ];
   
