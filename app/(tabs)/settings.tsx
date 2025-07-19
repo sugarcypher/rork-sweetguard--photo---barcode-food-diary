@@ -5,6 +5,7 @@ import Colors from '@/constants/colors';
 import { useFoodLogStore } from '@/store/foodLogStore';
 import { useCypherStore } from '@/store/cypherStore';
 import { useSecurityStore } from '@/store/securityStore';
+import { useTourStore } from '@/store/tourStore';
 import { DAILY_SUGAR_LIMIT_GRAMS } from '@/constants/sugarLimits';
 import ShoogSniffaAvatar from '@/components/ShoogSniffaAvatar';
 import { SecurityDashboard } from '@/components/SecurityDashboard';
@@ -26,6 +27,7 @@ export default function SettingsScreen() {
   const { clearToday } = useFoodLogStore();
   const { preferences, updatePreferences, badges } = useCypherStore();
   const { securityHealth, privacySettings } = useSecurityStore();
+  const { resetTour } = useTourStore();
   const [showSecurityDashboard, setShowSecurityDashboard] = useState(false);
   
   const handleClearToday = () => {
@@ -219,6 +221,22 @@ export default function SettingsScreen() {
           "Remove all food entries for today",
           <ChevronRight size={20} color={Colors.subtext} />,
           handleClearToday
+        )}
+        
+        <Text style={styles.sectionTitle}>Help & Learning</Text>
+        
+        {renderSettingItem(
+          <HelpCircle size={22} color={Colors.primary} />,
+          "Replay App Tour",
+          "Show the interactive walkthrough again",
+          <ChevronRight size={20} color={Colors.subtext} />,
+          () => {
+            resetTour();
+            Alert.alert(
+              "Tour Reset",
+              "The app tour will start when you return to the home screen."
+            );
+          }
         )}
         
         <Text style={styles.sectionTitle}>About</Text>

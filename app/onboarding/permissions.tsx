@@ -5,6 +5,7 @@ import { useCameraPermissions } from 'expo-camera';
 import Colors from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Camera, Bell, Mic, Shield } from 'lucide-react-native';
+import { useTourStore } from '@/store/tourStore';
 
 export default function PermissionsScreen() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function PermissionsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [parentalMode, setParentalMode] = useState(false);
+  const { setShowTour } = useTourStore();
   
   const handleComplete = async () => {
     if (!cameraPermission?.granted) {
@@ -27,6 +29,8 @@ export default function PermissionsScreen() {
     }
     
     // Save preferences to storage here
+    // Trigger the tour after onboarding is complete
+    setShowTour(true);
     router.replace('/(tabs)');
   };
   

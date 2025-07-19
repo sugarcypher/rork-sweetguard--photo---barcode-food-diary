@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useFoodLogStore, initializeWithSampleData } from '@/store/foodLogStore';
+import { useTourStore } from '@/store/tourStore';
 import Colors from '@/constants/colors';
 import SugarProgressBar from '@/components/SugarProgressBar';
 import MealSection from '@/components/MealSection';
@@ -13,6 +14,7 @@ import AlternativeSuggestions from '@/components/AlternativeSuggestions';
 import DailyReflection from '@/components/DailyReflection';
 import MainMenu from '@/components/MainMenu';
 import SugarCubeIcon from '@/components/SugarCubeIcon';
+import OnboardingTour from '@/components/OnboardingTour';
 import { Food, ReflectionData } from '@/types/food';
 import { formatDateToYYYYMMDD } from '@/utils/foodUtils';
 import { Plus, MessageCircle, BookOpen } from 'lucide-react-native';
@@ -27,6 +29,8 @@ export default function HomeScreen() {
   const [dismissedAlerts, setDismissedAlerts] = useState<string[]>([]);
   const [showMainMenu, setShowMainMenu] = useState(false);
   
+  const { showTour, completeTour, setShowTour, initializeTour } = useTourStore();
+  
   const { 
     todaysFoods, 
     todaysTotalSugar, 
@@ -39,7 +43,9 @@ export default function HomeScreen() {
   useEffect(() => {
     // Initialize with sample data for demo purposes
     initializeWithSampleData();
-  }, []);
+    // Initialize tour state
+    initializeTour();
+  }, [initializeTour]);
   
   useEffect(() => {
     if (isLoading) return;
@@ -275,6 +281,12 @@ export default function HomeScreen() {
         visible={showReflection}
         onClose={() => setShowReflection(false)}
         onSave={handleSaveReflection}
+      />
+      
+      <OnboardingTour
+        visible={showTour}
+        onComplete={completeTour}
+        onSkip={completeTour}
       />
     </>
   );
