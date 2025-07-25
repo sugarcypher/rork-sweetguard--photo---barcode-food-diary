@@ -154,6 +154,31 @@ export const inspirationalQuotes: InspirationalQuote[] = [
     author: 'B.K.S. Iyengar'
   },
   {
+    id: 'health-11',
+    text: 'The doctor of the future will give no medicine, but will interest his patients in the care of the human frame, in diet, and in the cause and prevention of disease.',
+    author: 'Thomas Edison'
+  },
+  {
+    id: 'health-12',
+    text: 'He who conquers others is strong; he who conquers himself is mighty.',
+    author: 'Lao Tzu'
+  },
+  {
+    id: 'health-13',
+    text: 'What we plant in the soil of contemplation, we shall reap in the harvest of action.',
+    author: 'Meister Eckhart'
+  },
+  {
+    id: 'health-14',
+    text: 'The wise find pleasure in water; the virtuous find pleasure in hills.',
+    author: 'Confucius'
+  },
+  {
+    id: 'health-15',
+    text: 'Prevention is better than cure.',
+    author: 'Desiderius Erasmus'
+  },
+  {
     id: 'sugar-1',
     text: 'Every time you choose water over soda, you choose health over habit.',
   },
@@ -172,6 +197,26 @@ export const inspirationalQuotes: InspirationalQuote[] = [
   {
     id: 'sugar-5',
     text: 'You have the power to rewrite your relationship with food.',
+  },
+  {
+    id: 'sugar-6',
+    text: 'Sweet freedom comes from saying no to artificial sweetness.',
+  },
+  {
+    id: 'sugar-7',
+    text: 'Real energy comes from nourishment, not from sugar spikes.',
+  },
+  {
+    id: 'sugar-8',
+    text: 'Choose foods that love you back.',
+  },
+  {
+    id: 'sugar-9',
+    text: 'Your taste buds can be retrained to appreciate natural flavors.',
+  },
+  {
+    id: 'sugar-10',
+    text: 'Every healthy choice is a step towards the person you want to become.',
   }
 ];
 

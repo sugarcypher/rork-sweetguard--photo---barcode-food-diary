@@ -194,6 +194,7 @@ const openFoodFactsResolver = async (barcode: string): Promise<ResolverResult> =
     
     if (!response.ok) {
       if (response.status === 404) {
+        console.log(`[OpenFoodFacts] Product ${barcode} not found in database (404)`);
         return { success: false, error: 'Product not found in Open Food Facts database' };
       }
       throw new Error(`HTTP ${response.status}`);

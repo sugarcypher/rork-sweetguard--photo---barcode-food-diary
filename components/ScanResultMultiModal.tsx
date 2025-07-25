@@ -24,6 +24,44 @@ interface ScanResultMultiModalProps {
 
 type ViewMode = 'cypher' | 'sniffa' | 'guardian';
 
+const getSmartAlternative = (productName: string, sugarContent: number): string => {
+  const name = productName.toLowerCase();
+  
+  // Determine product category
+  const isBeverage = name.includes('cola') || name.includes('soda') || name.includes('drink') || 
+                    name.includes('juice') || name.includes('smoothie') || name.includes('tea') ||
+                    name.includes('coffee') || name.includes('latte') || name.includes('beverage');
+  
+  const isSnack = name.includes('cookie') || name.includes('chip') || name.includes('candy') ||
+                  name.includes('bar') || name.includes('cracker') || name.includes('nuts');
+  
+  const isDessert = name.includes('cake') || name.includes('ice cream') || name.includes('donut') ||
+                   name.includes('brownie') || name.includes('pie');
+  
+  const isBreakfast = name.includes('cereal') || name.includes('granola') || name.includes('muffin') ||
+                     name.includes('pancake') || name.includes('waffle') || name.includes('yogurt');
+  
+  // Return category-appropriate alternatives
+  if (isBeverage) {
+    return `• Sparkling water with fresh lemon — 0g sugar, naturally refreshing`;
+  }
+  
+  if (isSnack) {
+    return `• Mixed raw almonds — 1g natural sugars, healthy fats & protein`;
+  }
+  
+  if (isDessert) {
+    return `• Fresh berries with Greek yogurt — 8g natural sugars, probiotics`;
+  }
+  
+  if (isBreakfast) {
+    return `• Steel-cut oats with cinnamon — 6g natural sugars, high fiber`;
+  }
+  
+  // Generic healthy alternative
+  return `• Fresh fruit salad — ${Math.max(6, Math.round(sugarContent * 0.3))}g natural sugars, vitamins & fiber`;
+};
+
 export default function ScanResultMultiModal({ result, onClose }: ScanResultMultiModalProps) {
   const [activeMode, setActiveMode] = useState<ViewMode>('sniffa');
   const [sniffaMessage, setSniffaMessage] = useState(0);
@@ -135,10 +173,14 @@ export default function ScanResultMultiModal({ result, onClose }: ScanResultMult
       
       <TouchableOpacity 
         style={styles.expandButton}
-        onPress={() => setExpandedMolecular(!expandedMolecular)}
+        onPress={() => {
+          console.log('Molecular expand button pressed, current state:', expandedMolecular);
+          setExpandedMolecular(!expandedMolecular);
+        }}
+        activeOpacity={0.7}
       >
         <Text style={styles.expandText}>
-          {expandedMolecular ? '🔼' : '🔎'} {expandedMolecular ? 'Collapse' : 'Expand for'} molecular source, glycemic load, daily impact
+          {expandedMolecular ? '🔼 Collapse' : '🔎 Expand for'} molecular source, glycemic load, daily impact
         </Text>
       </TouchableOpacity>
       
@@ -254,7 +296,9 @@ export default function ScanResultMultiModal({ result, onClose }: ScanResultMult
       <View style={styles.alternativeSection}>
         <Text style={styles.alternativeTitle}>✅ Try this instead:</Text>
         <View style={styles.alternativeItem}>
-          <Text style={styles.alternativeName}>• "Nosh Bar Almond Crunch" — 4.2g sugar, no syrups</Text>
+          <Text style={styles.alternativeName}>
+            {getSmartAlternative(result.name, result.totalSugars)}
+          </Text>
         </View>
         
         <View style={styles.tipContainer}>
