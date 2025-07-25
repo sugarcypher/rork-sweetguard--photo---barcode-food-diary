@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Colors from '@/constants/colors';
 import { Lightbulb, ArrowRight } from 'lucide-react-native';
+import { MealType } from '@/types/food';
 
 interface Alternative {
   name: string;
@@ -13,14 +14,34 @@ interface Alternative {
 interface AlternativeSuggestionsProps {
   foodName: string;
   currentSugar: number;
+  mealType?: MealType;
   onSelectAlternative?: (alternative: Alternative) => void;
 }
 
-const getAlternatives = (foodName: string, currentSugar: number): Alternative[] => {
+const getAlternatives = (foodName: string, currentSugar: number, mealType?: MealType): Alternative[] => {
   const name = foodName.toLowerCase();
   
+  // Determine food category from name and context
+  const isBeverage = name.includes('soda') || name.includes('cola') || name.includes('soft drink') || 
+                    name.includes('juice') || name.includes('smoothie') || name.includes('drink') ||
+                    name.includes('tea') || name.includes('coffee') || name.includes('latte') ||
+                    name.includes('frappuccino') || name.includes('beverage') || name.includes('water');
+  
+  const isSnack = name.includes('candy') || name.includes('chocolate') || name.includes('cookie') ||
+                  name.includes('chip') || name.includes('bar') || name.includes('cracker') ||
+                  name.includes('nuts') || name.includes('popcorn') || mealType === 'snack';
+  
+  const isBreakfast = name.includes('cereal') || name.includes('granola') || name.includes('muffin') ||
+                     name.includes('pancake') || name.includes('waffle') || name.includes('toast') ||
+                     name.includes('yogurt') || mealType === 'breakfast';
+  
+  const isDessert = name.includes('cake') || name.includes('pie') || name.includes('ice cream') ||
+                   name.includes('donut') || name.includes('pastry') || name.includes('brownie');
+  
+  const isMainMeal = mealType === 'lunch' || mealType === 'dinner';
+  
   // Beverage alternatives
-  if (name.includes('soda') || name.includes('cola') || name.includes('soft drink')) {
+  if (isBeverage) {
     return [
       {
         name: 'Sparkling water with lemon',
@@ -39,12 +60,18 @@ const getAlternatives = (foodName: string, currentSugar: number): Alternative[] 
         sugarContent: 2,
         benefits: ['Probiotics', 'Lower sugar', 'Gut health'],
         category: 'Beverage'
+      },
+      {
+        name: 'Coconut water',
+        sugarContent: 6,
+        benefits: ['Natural electrolytes', 'Lower sugar', 'Hydrating'],
+        category: 'Beverage'
       }
     ];
   }
   
   // Snack alternatives
-  if (name.includes('candy') || name.includes('chocolate') || name.includes('cookie')) {
+  if (isSnack) {
     return [
       {
         name: 'Mixed nuts',
@@ -63,12 +90,18 @@ const getAlternatives = (foodName: string, currentSugar: number): Alternative[] 
         sugarContent: 7,
         benefits: ['Antioxidants', 'Lower sugar', 'Satisfying'],
         category: 'Snack'
+      },
+      {
+        name: 'Greek yogurt with berries',
+        sugarContent: 8,
+        benefits: ['Protein', 'Natural sugars', 'Probiotics'],
+        category: 'Snack'
       }
     ];
   }
   
   // Breakfast alternatives
-  if (name.includes('cereal') || name.includes('granola') || name.includes('muffin')) {
+  if (isBreakfast) {
     return [
       {
         name: 'Steel-cut oats with berries',
@@ -87,6 +120,60 @@ const getAlternatives = (foodName: string, currentSugar: number): Alternative[] 
         sugarContent: 2,
         benefits: ['Healthy fats', 'Fiber', 'Very low sugar'],
         category: 'Breakfast'
+      },
+      {
+        name: 'Scrambled eggs with spinach',
+        sugarContent: 1,
+        benefits: ['High protein', 'Vitamins', 'Almost no sugar'],
+        category: 'Breakfast'
+      }
+    ];
+  }
+  
+  // Dessert alternatives
+  if (isDessert) {
+    return [
+      {
+        name: 'Fresh berries with cream',
+        sugarContent: 8,
+        benefits: ['Natural sugars', 'Antioxidants', 'Lower calories'],
+        category: 'Dessert'
+      },
+      {
+        name: 'Dark chocolate square',
+        sugarContent: 5,
+        benefits: ['Antioxidants', 'Portion control', 'Satisfying'],
+        category: 'Dessert'
+      },
+      {
+        name: 'Greek yogurt with honey',
+        sugarContent: 12,
+        benefits: ['Protein', 'Natural sweetener', 'Probiotics'],
+        category: 'Dessert'
+      }
+    ];
+  }
+  
+  // Main meal alternatives (for high-sugar main dishes)
+  if (isMainMeal && currentSugar > 10) {
+    return [
+      {
+        name: 'Grilled protein with vegetables',
+        sugarContent: 3,
+        benefits: ['High protein', 'Fiber', 'Very low sugar'],
+        category: 'Main dish'
+      },
+      {
+        name: 'Quinoa salad with herbs',
+        sugarContent: 4,
+        benefits: ['Complete protein', 'Fiber', 'Nutrient dense'],
+        category: 'Main dish'
+      },
+      {
+        name: 'Cauliflower rice stir-fry',
+        sugarContent: 6,
+        benefits: ['Low carb', 'Vegetables', 'Lower sugar'],
+        category: 'Main dish'
       }
     ];
   }
@@ -96,7 +183,7 @@ const getAlternatives = (foodName: string, currentSugar: number): Alternative[] 
     return [
       {
         name: 'Fresh fruit salad',
-        sugarContent: Math.max(8, currentSugar * 0.4),
+        sugarContent: Math.max(8, Math.round(currentSugar * 0.4)),
         benefits: ['Natural sugars', 'Vitamins', 'Fiber'],
         category: 'Healthy swap'
       },
@@ -115,9 +202,10 @@ const getAlternatives = (foodName: string, currentSugar: number): Alternative[] 
 export default function AlternativeSuggestions({ 
   foodName, 
   currentSugar, 
+  mealType,
   onSelectAlternative 
 }: AlternativeSuggestionsProps) {
-  const alternatives = getAlternatives(foodName, currentSugar);
+  const alternatives = getAlternatives(foodName, currentSugar, mealType);
   
   if (alternatives.length === 0) return null;
   

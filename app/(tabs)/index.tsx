@@ -206,6 +206,7 @@ export default function HomeScreen() {
               <AlternativeSuggestions
                 foodName={getHighSugarFood()!.name}
                 currentSugar={getHighSugarFood()!.sugarPerServing}
+                mealType={getHighSugarFood()!.mealType}
               />
             )}
             
