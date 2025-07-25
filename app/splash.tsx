@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import SugarCubeIcon from '@/components/SugarCubeIcon';
 import { LinearGradient } from 'expo-linear-gradient';
+import { getSplashScreenFacts, SugarFact } from '@/constants/sugarEducation';
 
 export default function SplashScreen() {
   const router = useRouter();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(50)).current;
+  const factFadeAnim = React.useRef(new Animated.Value(1)).current;
+  
+  const [currentFactIndex, setCurrentFactIndex] = useState<number>(0);
+  const [facts] = useState<SugarFact[]>(() => getSplashScreenFacts());
   
   useEffect(() => {
     Animated.parallel([
@@ -23,7 +28,30 @@ export default function SplashScreen() {
         useNativeDriver: true,
       })
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      Animated.sequence([
+        Animated.timing(factFadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(factFadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        })
+      ]).start();
+      
+      setTimeout(() => {
+        setCurrentFactIndex((prev) => (prev + 1) % facts.length);
+      }, 300);
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, [factFadeAnim, facts.length]);
   
   const handleGetStarted = () => {
     router.replace('/(tabs)');
@@ -56,15 +84,31 @@ export default function SplashScreen() {
           </Text>
         </View>
         
-        <View style={styles.factContainer}>
+        <Animated.View 
+          style={[
+            styles.factContainer,
+            { opacity: factFadeAnim }
+          ]}
+        >
           <Text style={styles.factTitle}>Did you know?</Text>
           <Text style={styles.factText}>
-            15 million deaths per year are directly or indirectly caused by excessive sugar consumption.
+            {facts[currentFactIndex]?.content || 'Loading educational content...'}
           </Text>
           <Text style={styles.factSubtext}>
-            But you have the power to change that story.
+            Knowledge is power - use it to transform your health.
           </Text>
-        </View>
+          <View style={styles.factIndicators}>
+            {facts.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.indicator,
+                  index === currentFactIndex && styles.activeIndicator
+                ]}
+              />
+            ))}
+          </View>
+        </Animated.View>
         
         <TouchableOpacity 
           style={styles.getStartedButton}
@@ -191,5 +235,20 @@ const styles = StyleSheet.create({
     color: Colors.subtext,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  factIndicators: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 12,
+    gap: 6,
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  activeIndicator: {
+    backgroundColor: Colors.primary,
   }
 });
