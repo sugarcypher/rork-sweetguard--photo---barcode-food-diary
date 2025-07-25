@@ -83,7 +83,7 @@ export default function SplashScreen() {
           activeOpacity={0.8}
         >
           <LinearGradient
-            colors={[Colors.primary, Colors.secondary]}
+            colors={['#8B5CF6', '#A855F7']}
             style={styles.buttonGradient}
           >
             <Text style={styles.buttonText}>
