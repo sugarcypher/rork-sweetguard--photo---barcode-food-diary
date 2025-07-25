@@ -134,12 +134,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   quoteContainer: {
-    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+    backgroundColor: 'rgba(20, 184, 166, 0.1)',
     borderRadius: 16,
     padding: 20,
     marginBottom: 30,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.primary,
+    borderLeftColor: '#14B8A6',
   },
   inspirationalText: {
     fontSize: 16,
