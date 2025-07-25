@@ -99,12 +99,92 @@ export const getSplashScreenFacts = (): SugarFact[] => {
   );
 };
 
+export interface InspirationalQuote {
+  id: string;
+  text: string;
+  author?: string;
+}
+
+export const inspirationalQuotes: InspirationalQuote[] = [
+  {
+    id: 'health-1',
+    text: 'Every small step towards better health is a victory worth celebrating.',
+  },
+  {
+    id: 'health-2',
+    text: 'Your body is your temple. Keep it pure and clean for the soul to reside in.',
+    author: 'B.K.S. Iyengar'
+  },
+  {
+    id: 'health-3',
+    text: 'Take care of your body. It\'s the only place you have to live.',
+    author: 'Jim Rohn'
+  },
+  {
+    id: 'health-4',
+    text: 'Health is not about the weight you lose, but about the life you gain.',
+  },
+  {
+    id: 'health-5',
+    text: 'The groundwork for all happiness is good health.',
+    author: 'Leigh Hunt'
+  },
+  {
+    id: 'health-6',
+    text: 'Your health is an investment, not an expense.',
+  },
+  {
+    id: 'health-7',
+    text: 'A healthy outside starts from the inside.',
+    author: 'Robert Urich'
+  },
+  {
+    id: 'health-8',
+    text: 'The first wealth is health.',
+    author: 'Ralph Waldo Emerson'
+  },
+  {
+    id: 'health-9',
+    text: 'To keep the body in good health is a duty... otherwise we shall not be able to keep our mind strong and clear.',
+    author: 'Buddha'
+  },
+  {
+    id: 'health-10',
+    text: 'Health is a state of complete harmony of the body, mind and spirit.',
+    author: 'B.K.S. Iyengar'
+  },
+  {
+    id: 'sugar-1',
+    text: 'Every time you choose water over soda, you choose health over habit.',
+  },
+  {
+    id: 'sugar-2',
+    text: 'Breaking free from sugar is breaking free from a cycle that doesn\'t serve you.',
+  },
+  {
+    id: 'sugar-3',
+    text: 'Your future self will thank you for the healthy choices you make today.',
+  },
+  {
+    id: 'sugar-4',
+    text: 'Awareness is the first step to transformation.',
+  },
+  {
+    id: 'sugar-5',
+    text: 'You have the power to rewrite your relationship with food.',
+  }
+];
+
 export const getRandomFact = (category?: SugarFact['category']): SugarFact => {
   const facts = category 
     ? sugarEducationLibrary.filter(fact => fact.category === category)
     : sugarEducationLibrary;
   
   return facts[Math.floor(Math.random() * facts.length)];
+};
+
+export const getRandomQuote = (): InspirationalQuote => {
+  return inspirationalQuotes[Math.floor(Math.random() * inspirationalQuotes.length)];
 };
 
 export const getFactsByCategory = (category: SugarFact['category']): SugarFact[] => {

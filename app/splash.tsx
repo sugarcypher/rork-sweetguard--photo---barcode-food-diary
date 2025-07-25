@@ -4,16 +4,15 @@ import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import SugarCubeIcon from '@/components/SugarCubeIcon';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getSplashScreenFacts, SugarFact } from '@/constants/sugarEducation';
+import { getRandomFact, getRandomQuote, SugarFact, InspirationalQuote } from '@/constants/sugarEducation';
 
 export default function SplashScreen() {
   const router = useRouter();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(50)).current;
-  const factFadeAnim = React.useRef(new Animated.Value(1)).current;
   
-  const [currentFactIndex, setCurrentFactIndex] = useState<number>(0);
-  const [facts] = useState<SugarFact[]>(() => getSplashScreenFacts());
+  const [currentFact] = useState<SugarFact>(() => getRandomFact());
+  const [currentQuote] = useState<InspirationalQuote>(() => getRandomQuote());
   
   useEffect(() => {
     Animated.parallel([
@@ -30,28 +29,7 @@ export default function SplashScreen() {
     ]).start();
   }, [fadeAnim, slideAnim]);
   
-  useEffect(() => {
-    const interval = setInterval(() => {
-      Animated.sequence([
-        Animated.timing(factFadeAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(factFadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        })
-      ]).start();
-      
-      setTimeout(() => {
-        setCurrentFactIndex((prev) => (prev + 1) % facts.length);
-      }, 300);
-    }, 4000);
-    
-    return () => clearInterval(interval);
-  }, [factFadeAnim, facts.length]);
+
   
   const handleGetStarted = () => {
     router.replace('/(tabs)');
@@ -80,35 +58,24 @@ export default function SplashScreen() {
         
         <View style={styles.quoteContainer}>
           <Text style={styles.inspirationalText}>
-            &quot;Every small step towards better health is a victory worth celebrating.&quot;
+            &quot;{currentQuote.text}&quot;
           </Text>
+          {currentQuote.author && (
+            <Text style={styles.quoteAuthor}>
+              — {currentQuote.author}
+            </Text>
+          )}
         </View>
         
-        <Animated.View 
-          style={[
-            styles.factContainer,
-            { opacity: factFadeAnim }
-          ]}
-        >
+        <View style={styles.factContainer}>
           <Text style={styles.factTitle}>Did you know?</Text>
           <Text style={styles.factText}>
-            {facts[currentFactIndex]?.content || 'Loading educational content...'}
+            {currentFact.content}
           </Text>
           <Text style={styles.factSubtext}>
             Knowledge is power - use it to transform your health.
           </Text>
-          <View style={styles.factIndicators}>
-            {facts.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.indicator,
-                  index === currentFactIndex && styles.activeIndicator
-                ]}
-              />
-            ))}
-          </View>
-        </Animated.View>
+        </View>
         
         <TouchableOpacity 
           style={styles.getStartedButton}
@@ -236,19 +203,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
-  factIndicators: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 12,
-    gap: 6,
-  },
-  indicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  activeIndicator: {
-    backgroundColor: Colors.primary,
+  quoteAuthor: {
+    fontSize: 14,
+    color: Colors.primary,
+    textAlign: 'center',
+    fontWeight: '500',
+    marginTop: 8,
+    fontStyle: 'italic',
   }
 });
