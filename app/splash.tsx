@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import SugarCubeIcon from '@/components/SugarCubeIcon';
@@ -53,7 +53,7 @@ export default function SplashScreen() {
           <SugarCubeIcon size={80} color={Colors.primary} />
         </View>
         
-        <Text style={styles.appName}>Sugar Cypher</Text>
+        <Text style={styles.appName}>SugarCypher</Text>
         <Text style={styles.tagline}>Take Control of Your Health</Text>
         
         <View style={styles.quoteContainer}>
@@ -121,10 +121,15 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 36,
-    fontWeight: '800',
-    color: Colors.text,
+    fontWeight: '900',
+    color: '#32CD32',
     marginBottom: 8,
     textAlign: 'center',
+    letterSpacing: 2,
+    textShadowColor: 'rgba(50, 205, 50, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   tagline: {
     fontSize: 18,
