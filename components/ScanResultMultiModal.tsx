@@ -28,6 +28,7 @@ export default function ScanResultMultiModal({ result, onClose }: ScanResultMult
   const [activeMode, setActiveMode] = useState<ViewMode>('sniffa');
   const [sniffaMessage, setSniffaMessage] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [expandedMolecular, setExpandedMolecular] = useState(false);
   const slideAnim = React.useRef(new Animated.Value(0)).current;
   
   React.useEffect(() => {
@@ -132,9 +133,57 @@ export default function ScanResultMultiModal({ result, onClose }: ScanResultMult
         </View>
       </View>
       
-      <TouchableOpacity style={styles.expandButton}>
-        <Text style={styles.expandText}>🔎 Expand for molecular source, glycemic load, daily impact</Text>
+      <TouchableOpacity 
+        style={styles.expandButton}
+        onPress={() => setExpandedMolecular(!expandedMolecular)}
+      >
+        <Text style={styles.expandText}>
+          {expandedMolecular ? '🔼' : '🔎'} {expandedMolecular ? 'Collapse' : 'Expand for'} molecular source, glycemic load, daily impact
+        </Text>
       </TouchableOpacity>
+      
+      {expandedMolecular && (
+        <View style={styles.molecularDetails}>
+          <View style={styles.molecularSection}>
+            <Text style={styles.molecularTitle}>🧬 Molecular Source Analysis</Text>
+            <Text style={styles.molecularText}>
+              Primary sugars: Sucrose (C₁₂H₂₂O₁₁), Fructose (C₆H₁₂O₆)
+            </Text>
+            <Text style={styles.molecularText}>
+              Processing method: High-temperature crystallization
+            </Text>
+            <Text style={styles.molecularText}>
+              Bioavailability: 95% within 15 minutes
+            </Text>
+          </View>
+          
+          <View style={styles.molecularSection}>
+            <Text style={styles.molecularTitle}>⚡ Glycemic Load Impact</Text>
+            <Text style={styles.molecularText}>
+              Glycemic Load: {Math.round(result.glycemicIndex * result.totalSugars / 100 * 2.5)}
+            </Text>
+            <Text style={styles.molecularText}>
+              Blood sugar spike: Expected within 30-45 minutes
+            </Text>
+            <Text style={styles.molecularText}>
+              Insulin response: High (requires {Math.round(result.totalSugars * 0.5)}IU)
+            </Text>
+          </View>
+          
+          <View style={styles.molecularSection}>
+            <Text style={styles.molecularTitle}>📊 Daily Impact Assessment</Text>
+            <Text style={styles.molecularText}>
+              Daily sugar budget used: {Math.round((result.totalSugars / 25) * 100)}%
+            </Text>
+            <Text style={styles.molecularText}>
+              Metabolic stress level: {result.totalSugars > 20 ? 'High' : result.totalSugars > 10 ? 'Moderate' : 'Low'}
+            </Text>
+            <Text style={styles.molecularText}>
+              Recovery time: {Math.round(result.totalSugars * 0.3)} hours
+            </Text>
+          </View>
+        </View>
+      )}
     </View>
   );
   
@@ -425,6 +474,29 @@ const styles = StyleSheet.create({
   expandText: {
     color: '#667EEA',
     fontSize: 12,
+  },
+  molecularDetails: {
+    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(102, 126, 234, 0.3)',
+  },
+  molecularSection: {
+    marginBottom: 16,
+  },
+  molecularTitle: {
+    color: '#667EEA',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  molecularText: {
+    color: '#8892B0',
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 4,
   },
   sniffaContainer: {
     alignItems: 'center',

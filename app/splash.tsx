@@ -47,7 +47,7 @@ export default function SplashScreen() {
           <SugarCubeIcon size={80} color={Colors.primary} />
         </View>
         
-        <Text style={styles.appName}>Sugar Tracker</Text>
+        <Text style={styles.appName}>Sugar Cypher</Text>
         <Text style={styles.tagline}>Take Control of Your Health</Text>
         
         <View style={styles.quoteContainer}>
