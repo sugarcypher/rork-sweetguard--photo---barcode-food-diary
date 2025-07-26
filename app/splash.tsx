@@ -53,7 +53,7 @@ export default function SplashScreen() {
           <SugarCubeIcon size={80} color={Colors.primary} />
         </View>
         
-        <Text style={styles.appName}>Sugar Cypher</Text>
+        <Text style={styles.appName}>SugarCypher</Text>
         <Text style={styles.tagline}>Take Control of Your Health</Text>
         
         <View style={styles.quoteContainer}>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(50, 205, 50, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    fontFamily: Platform.OS === 'ios' ? 'Futura' : 'sans-serif-condensed',
   },
   tagline: {
     fontSize: 18,
@@ -170,14 +170,14 @@ const styles = StyleSheet.create({
   },
   factText: {
     fontSize: 15,
-    color: Colors.text,
+    color: '#FFFFE0',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 8,
   },
   factSubtext: {
     fontSize: 14,
-    color: Colors.primary,
+    color: '#FFFFE0',
     textAlign: 'center',
     fontWeight: '500',
   },
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   quoteAuthor: {
     fontSize: 14,
-    color: Colors.primary,
+    color: '#14B8A6',
     textAlign: 'center',
     fontWeight: '500',
     marginTop: 8,
