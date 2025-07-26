@@ -59,6 +59,8 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentFoodData, setCurrentFoodData] = useState<FoodData | null>(null);
   const [manualInput, setManualInput] = useState('');
+  const [showNotFoundError, setShowNotFoundError] = useState(false);
+  const [lastSearchTerm, setLastSearchTerm] = useState('');
 
   // Convert ResolverFoodData to FoodData format for MetaSweet compatibility
   const convertToMetaSweetFormat = (resolverData: ResolverFoodData): FoodData => {
@@ -180,6 +182,8 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
   const handleBarcodeScanned = useCallback(async (barcode: string) => {
     setScannerVisible(false);
     setIsProcessing(true);
+    setShowNotFoundError(false);
+    setLastSearchTerm(barcode);
 
     try {
       const result = await lookupFoodData(barcode);
@@ -187,14 +191,8 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
       if (result.success && result.foodData) {
         setCurrentFoodData(result.foodData);
       } else {
-        Alert.alert(
-          'Food Not Found',
-          result.error || 'Could not find information for this barcode. Try manual entry instead.',
-          [
-            { text: 'Try Manual Entry', onPress: () => setManualEntryVisible(true) },
-            { text: 'Cancel', style: 'cancel' }
-          ]
-        );
+        // Show cute error message instead of 404
+        setShowNotFoundError(true);
         setIsProcessing(false);
       }
     } catch (error) {
@@ -211,6 +209,8 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
 
     setManualEntryVisible(false);
     setIsProcessing(true);
+    setShowNotFoundError(false);
+    setLastSearchTerm(manualInput.trim());
 
     try {
       const result = await lookupFoodData(manualInput.trim());
@@ -218,13 +218,9 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
       if (result.success && result.foodData) {
         setCurrentFoodData(result.foodData);
       } else {
-        Alert.alert(
-          'Food Not Found', 
-          result.error || 'Could not find information for this item.',
-          [
-            { text: 'OK', onPress: () => setIsProcessing(false) }
-          ]
-        );
+        // Show cute error message instead of 404
+        setShowNotFoundError(true);
+        setIsProcessing(false);
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to process manual entry. Please try again.');
@@ -253,10 +249,17 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
     setCurrentFoodData(null);
     setIsProcessing(false);
     setManualInput('');
+    setShowNotFoundError(false);
+    setLastSearchTerm('');
     setScannerVisible(false);
     setManualEntryVisible(false);
     onClose();
   }, [onClose]);
+
+  const handleTryAgain = useCallback(() => {
+    setShowNotFoundError(false);
+    setIsProcessing(false);
+  }, []);
 
   if (!visible) {
     return null;
@@ -298,6 +301,37 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
                   onError={handleMetaSweetError}
                 />
               )}
+            </View>
+          ) : showNotFoundError ? (
+            <View style={styles.notFoundContainer}>
+              <Text style={styles.notFoundEmoji}>🔍😅</Text>
+              <Text style={styles.notFoundTitle}>Oops!</Text>
+              <Text style={styles.notFoundMessage}>
+                That item is not findable with the various libraries we reference.
+              </Text>
+              <Text style={styles.notFoundSubMessage}>
+                We searched through our food databases but couldn&apos;t locate &quot;{lastSearchTerm}&quot;. 
+                Don&apos;t worry though - you can try a different barcode or add it manually!
+              </Text>
+              
+              <View style={styles.notFoundActions}>
+                <TouchableOpacity
+                  style={styles.tryAgainButton}
+                  onPress={handleTryAgain}
+                >
+                  <Text style={styles.tryAgainButtonText}>Try Another Item</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  style={styles.manualEntryButton}
+                  onPress={() => {
+                    setShowNotFoundError(false);
+                    setManualEntryVisible(true);
+                  }}
+                >
+                  <Text style={styles.manualEntryButtonText}>Add Manually</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ) : (
             <View style={styles.optionsContainer}>
@@ -523,6 +557,69 @@ const styles = StyleSheet.create({
   },
   searchButtonText: {
     color: '#000',
+    fontSize: 16,
+    fontWeight: '600' as const,
+  },
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+    paddingVertical: 60,
+  },
+  notFoundEmoji: {
+    fontSize: 64,
+    marginBottom: 20,
+  },
+  notFoundTitle: {
+    fontSize: 28,
+    fontWeight: '700' as const,
+    color: '#333',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  notFoundMessage: {
+    fontSize: 18,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 12,
+    lineHeight: 26,
+    fontWeight: '500' as const,
+  },
+  notFoundSubMessage: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 40,
+  },
+  notFoundActions: {
+    width: '100%',
+    gap: 12,
+  },
+  tryAgainButton: {
+    backgroundColor: '#00ff88',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  tryAgainButtonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600' as const,
+  },
+  manualEntryButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#00ff88',
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  manualEntryButtonText: {
+    color: '#00ff88',
     fontSize: 16,
     fontWeight: '600' as const,
   },
