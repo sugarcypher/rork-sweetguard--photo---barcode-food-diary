@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   },
   factSubtext: {
     fontSize: 14,
-    color: '#FFFFE0',
+    color: '#FFFFFF',
     textAlign: 'center',
     fontWeight: '500',
   },
