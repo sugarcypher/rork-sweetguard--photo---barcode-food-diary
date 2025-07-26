@@ -54,7 +54,7 @@ export default function SplashScreen() {
         </View>
         
         <Text style={styles.appName}>SugarCypher</Text>
-        <Text style={styles.tagline}>DECODE YOUR HEALTH</Text>
+        <Text style={styles.tagline}>DECODE YOUR DIET</Text>
         
         <View style={styles.quoteContainer}>
           <Text style={styles.inspirationalText}>
