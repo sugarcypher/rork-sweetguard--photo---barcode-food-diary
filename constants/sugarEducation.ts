@@ -2,7 +2,7 @@ export interface SugarFact {
   id: string;
   title: string;
   content: string;
-  category: 'addiction' | 'health' | 'candida' | 'brain' | 'statistics';
+  category: 'addiction' | 'health' | 'candida' | 'brain' | 'statistics' | 'politics';
   severity: 'info' | 'warning' | 'critical';
 }
 
@@ -90,12 +90,138 @@ export const sugarEducationLibrary: SugarFact[] = [
     content: 'High sugar intake can impair memory formation and learning ability by affecting brain-derived neurotrophic factor (BDNF).',
     category: 'brain',
     severity: 'warning'
+  },
+  {
+    id: 'politics-spending-1',
+    title: 'Sugar Industry Spending',
+    content: 'Sugar giants spend $10M+ annually to protect their profits.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-crystal-1',
+    title: 'American Crystal Sugar Lobbying',
+    content: 'American Crystal Sugar dumped $3M+ on lobbying in 2024 alone.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-beet-1',
+    title: 'Beet Sugar Association',
+    content: 'The U.S. Beet Sugar Association spent $4M to influence Congress in 2024.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-dominance-1',
+    title: 'Lobbying Dominance',
+    content: 'Sugar makes up 2% of U.S. crops but dominates 55% of lobbying.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-pacs-1',
+    title: 'Bipartisan Donations',
+    content: 'Sugar PACs donate to both Republicans and Democrats.',
+    category: 'politics',
+    severity: 'warning'
+  },
+  {
+    id: 'politics-fanjul-1',
+    title: 'Political Influence',
+    content: 'The Fanjul family hosts fundraisers for both Trump and Biden.',
+    category: 'politics',
+    severity: 'warning'
+  },
+  {
+    id: 'politics-prices-1',
+    title: 'Inflated Sugar Prices',
+    content: 'Sugar prices are 3x the global cost thanks to political protection.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-cost-1',
+    title: 'Consumer Cost',
+    content: 'Americans pay billions more each year for sugar to protect corporate profits.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-guaranteed-1',
+    title: 'Guaranteed Profits',
+    content: 'U.S. laws lock in sugar industry profits—guaranteed.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-corn-1',
+    title: 'Corn Syrup Lobbying',
+    content: 'Corn syrup lobbyists spent $1M in 2024 to protect their profits.',
+    category: 'politics',
+    severity: 'warning'
+  },
+  {
+    id: 'politics-studies-1',
+    title: 'Funded Studies',
+    content: 'Studies claiming corn syrup is safe? Funded by the corn lobby.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-manipulation-1',
+    title: 'Public Opinion Manipulation',
+    content: 'Corn syrup lobbyists manipulate public opinion with fake nonprofits.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-labeling-1',
+    title: 'Weakened Labeling Laws',
+    content: 'Lobbyists weakened sugar labeling laws so you stay in the dark.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-health-1',
+    title: 'Blocking Health Laws',
+    content: 'Sugar and corn lobbyists block laws to fight obesity and diabetes.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-flood-1',
+    title: 'PAC Donations',
+    content: 'Sugar industry PACs flood both parties with donations to protect profits.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-opposition-1',
+    title: 'Campaign Opposition',
+    content: 'Politicians who fight sugar subsidies face massive campaign opposition.',
+    category: 'politics',
+    severity: 'warning'
+  },
+  {
+    id: 'politics-taxpayer-1',
+    title: 'Taxpayer Funded',
+    content: 'Sugar profits are legally guaranteed—your tax dollars at work.',
+    category: 'politics',
+    severity: 'critical'
+  },
+  {
+    id: 'politics-congress-1',
+    title: 'Lobbyist-Written Laws',
+    content: 'Congress passes laws written by sugar and corn lobbyists—not the people.',
+    category: 'politics',
+    severity: 'critical'
   }
 ];
 
 export const getSplashScreenFacts = (): SugarFact[] => {
   return sugarEducationLibrary.filter(fact => 
-    fact.severity === 'critical' || fact.category === 'brain' || fact.category === 'candida'
+    fact.severity === 'critical' || fact.category === 'brain' || fact.category === 'candida' || fact.category === 'politics'
   );
 };
 
