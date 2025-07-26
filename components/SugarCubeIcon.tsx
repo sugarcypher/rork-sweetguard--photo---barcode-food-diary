@@ -1,49 +1,77 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
+import { Search, Shield, AlertTriangle } from 'lucide-react-native';
 
-interface SugarCubeIconProps {
+interface SugarCypherIconProps {
   size?: number;
   color?: string;
 }
 
-export default function SugarCubeIcon({ size = 24, color = Colors.primary }: SugarCubeIconProps) {
+export default function SugarCubeIcon({ size = 24, color = '#32CD32' }: SugarCypherIconProps) {
   return (
     <View style={[styles.container, { width: size, height: size }]}>
-      {/* Main cube face */}
-      <View style={[styles.face, styles.front, { 
-        width: size * 0.8, 
-        height: size * 0.8,
-        backgroundColor: color,
-        borderRadius: size * 0.1
+      {/* Outer protective ring */}
+      <View style={[styles.outerRing, { 
+        width: size, 
+        height: size,
+        borderColor: '#14B8A6',
+        borderRadius: size / 2
       }]} />
       
-      {/* Top face */}
-      <View style={[styles.face, styles.top, { 
-        width: size * 0.8, 
-        height: size * 0.3,
-        backgroundColor: color,
-        opacity: 0.8,
-        borderRadius: size * 0.05
+      {/* Inner shield background */}
+      <View style={[styles.shieldBg, { 
+        width: size * 0.7, 
+        height: size * 0.7,
+        backgroundColor: 'rgba(50, 205, 50, 0.2)',
+        borderRadius: size * 0.35
       }]} />
       
-      {/* Right face */}
-      <View style={[styles.face, styles.right, { 
-        width: size * 0.3, 
-        height: size * 0.8,
-        backgroundColor: color,
-        opacity: 0.6,
-        borderRadius: size * 0.05
+      {/* Main shield icon */}
+      <View style={styles.iconContainer}>
+        <Shield 
+          size={size * 0.4} 
+          color={color} 
+          fill={`${color}40`}
+        />
+      </View>
+      
+      {/* Search magnifier overlay */}
+      <View style={[styles.searchOverlay, {
+        top: size * 0.15,
+        right: size * 0.15
+      }]}>
+        <Search 
+          size={size * 0.25} 
+          color={'#FFD700'} 
+          strokeWidth={3}
+        />
+      </View>
+      
+      {/* Warning indicator */}
+      <View style={[styles.warningIndicator, {
+        bottom: size * 0.1,
+        left: size * 0.1
+      }]}>
+        <AlertTriangle 
+          size={size * 0.2} 
+          color={'#FF6B8B'} 
+          fill={'rgba(255, 107, 139, 0.3)'}
+        />
+      </View>
+      
+      {/* Pulse effect rings */}
+      <View style={[styles.pulseRing1, { 
+        width: size * 1.2, 
+        height: size * 1.2,
+        borderColor: 'rgba(20, 184, 166, 0.3)',
+        borderRadius: size * 0.6
       }]} />
       
-      {/* Sparkle effect */}
-      <View style={[styles.sparkle, { 
-        width: size * 0.15, 
-        height: size * 0.15,
-        backgroundColor: 'white',
-        borderRadius: size * 0.075,
-        top: size * 0.2,
-        left: size * 0.25
+      <View style={[styles.pulseRing2, { 
+        width: size * 1.4, 
+        height: size * 1.4,
+        borderColor: 'rgba(20, 184, 166, 0.15)',
+        borderRadius: size * 0.7
       }]} />
     </View>
   );
@@ -55,24 +83,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  face: {
+  outerRing: {
     position: 'absolute',
-  },
-  front: {
-    zIndex: 3,
-  },
-  top: {
-    zIndex: 2,
-    top: -4,
-    transform: [{ skewX: '45deg' }],
-  },
-  right: {
+    borderWidth: 3,
     zIndex: 1,
-    right: -4,
-    transform: [{ skewY: '45deg' }],
   },
-  sparkle: {
+  shieldBg: {
+    position: 'absolute',
+    zIndex: 2,
+  },
+  iconContainer: {
+    position: 'absolute',
+    zIndex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchOverlay: {
     position: 'absolute',
     zIndex: 4,
+  },
+  warningIndicator: {
+    position: 'absolute',
+    zIndex: 4,
+  },
+  pulseRing1: {
+    position: 'absolute',
+    borderWidth: 2,
+    zIndex: 0,
+  },
+  pulseRing2: {
+    position: 'absolute',
+    borderWidth: 1,
+    zIndex: 0,
   }
 });
