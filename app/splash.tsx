@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     fontWeight: '500',
+    fontStyle: 'italic',
   },
   getStartedButton: {
     width: '100%',
