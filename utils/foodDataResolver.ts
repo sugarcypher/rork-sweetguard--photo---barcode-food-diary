@@ -125,6 +125,7 @@ const calculateTrustScore = (data: Partial<FoodData>, source: string): number =>
   const sourceWeights: Record<string, number> = {
     'USDA FoodData Central': 0.95,
     'OpenFoodFacts': 0.85,
+    'Spoonacular': 0.88,
     'Edamam Food Database': 0.90,
     'FatSecret Platform': 0.80,
     'Go-UPC API': 0.70,
@@ -306,6 +307,80 @@ const goUpcResolver = async (barcode: string): Promise<ResolverResult> => {
   }
 };
 
+const spoonacularResolver = async (barcode: string): Promise<ResolverResult> => {
+  try {
+    console.log(`[Spoonacular] Looking up barcode: ${barcode}`);
+    
+    const API_KEY = '4da0394b1eef4ec1a35022fbe72ce558';
+    const url = `https://api.spoonacular.com/food/products/upc/${barcode}?apiKey=${API_KEY}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log(`[Spoonacular] Product ${barcode} not found (404)`);
+        return { success: false, error: 'Product not found in Spoonacular database' };
+      }
+      if (response.status === 402) {
+        console.log(`[Spoonacular] API quota exceeded (402)`);
+        return { success: false, error: 'Spoonacular API quota exceeded' };
+      }
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data || !data.title) {
+      return { success: false, error: 'Invalid response from Spoonacular API' };
+    }
+    
+    // Parse Spoonacular response
+    const nutrition = data.nutrition || {};
+    const nutrients = nutrition.nutrients || [];
+    
+    // Extract nutrition values
+    const getNutrient = (name: string) => {
+      const nutrient = nutrients.find((n: any) => n.name.toLowerCase().includes(name.toLowerCase()));
+      return nutrient ? parseFloat(nutrient.amount) || 0 : 0;
+    };
+    
+    const foodData: FoodData = {
+      product_name: data.title || 'Unknown Product',
+      brand: data.brand || 'Unknown Brand',
+      ingredients: data.ingredients ? data.ingredients.map((ing: any) => ing.name || ing) : [],
+      nutrition_facts: {
+        total_carbs_g: getNutrient('carbohydrates'),
+        fiber_g: getNutrient('fiber'),
+        sugars_g: getNutrient('sugar'),
+        protein_g: getNutrient('protein'),
+        fat_g: getNutrient('fat'),
+        calories: getNutrient('calories')
+      },
+      serving_size_g: parseFloat(data.servings?.size) || 100
+    };
+    
+    const trust_score = calculateTrustScore(foodData, 'Spoonacular');
+    const incomplete_flag = isIncomplete(foodData);
+    
+    console.log(`[Spoonacular] Found: ${foodData.product_name} (trust: ${trust_score}, incomplete: ${incomplete_flag})`);
+    
+    return {
+      success: true,
+      foodData,
+      source: 'Spoonacular',
+      trust_score,
+      incomplete_flag
+    };
+  } catch (error) {
+    console.error('[Spoonacular] Error:', error);
+    return { success: false, error: `Spoonacular API error: ${error}` };
+  }
+};
+
 const barcodeLookupResolver = async (barcode: string): Promise<ResolverResult> => {
   try {
     console.log(`[BarcodeLookup] Looking up barcode: ${barcode}`);
@@ -472,6 +547,16 @@ const API_SOURCES: APISource[] = [
     },
     notes: 'Primary source; includes ingredients_text for MetaSweet; respects user-agent and caching.',
     resolver: openFoodFactsResolver
+  },
+  {
+    name: 'Spoonacular',
+    access: 'freemium with API key',
+    url_template: 'https://api.spoonacular.com/food/products/upc/{barcode}?apiKey={API_KEY}',
+    policy: {
+      rate_limit_per_ip_per_hour: 150
+    },
+    notes: 'High-quality commercial food database with comprehensive nutrition data.',
+    resolver: spoonacularResolver
   },
   {
     name: 'USDA FoodData Central',
