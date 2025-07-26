@@ -72,10 +72,11 @@ export default function SplashScreen() {
           <Text style={styles.factText}>
             {currentFact.content}
           </Text>
-          <Text style={styles.factSubtext}>
-            Knowledge is power - use it to transform your health.
-          </Text>
         </View>
+        
+        <Text style={styles.factSubtext}>
+          Knowledge is power - use it to transform your health.
+        </Text>
         
         <TouchableOpacity 
           style={styles.getStartedButton}
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 215, 0, 0.1)',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 40,
+    marginBottom: 15,
     borderLeftWidth: 4,
     borderLeftColor: '#FFD700',
   },
@@ -181,6 +182,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
     fontStyle: 'italic',
+    marginBottom: 30,
   },
   getStartedButton: {
     width: '100%',
