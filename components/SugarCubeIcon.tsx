@@ -24,8 +24,8 @@ export default function SugarCubeIcon({ size = 24, color = '#32CD32' }: SugarCyp
         }]}>
           <Shield 
             size={size * 0.15} 
-            color={'#14B8A6'} 
-            fill={'rgba(20, 184, 166, 0.3)'}
+            color={'#32CD32'} 
+            fill={'rgba(50, 205, 50, 0.3)'}
           />
         </View>
       </View>

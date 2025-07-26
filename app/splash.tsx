@@ -54,7 +54,7 @@ export default function SplashScreen() {
         </View>
         
         <Text style={styles.appName}>SugarCypher</Text>
-        <Text style={styles.tagline}>Take Control of Your Health</Text>
+        <Text style={styles.tagline}>DECODE YOUR HEALTH</Text>
         
         <View style={styles.quoteContainer}>
           <Text style={styles.inspirationalText}>
@@ -88,7 +88,7 @@ export default function SplashScreen() {
             style={styles.buttonGradient}
           >
             <Text style={styles.buttonText}>
-              I am ready to reduce my sugar intake!
+              I AM READY TO REDUCE MY SUGAR INTAKE!
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -123,21 +123,23 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 36,
     fontWeight: '900',
-    color: '#32CD32',
+    color: '#00FFCC',
     marginBottom: 8,
     textAlign: 'center',
-    letterSpacing: -1,
-    textShadowColor: 'rgba(50, 205, 50, 0.3)',
+    letterSpacing: 1,
+    textShadowColor: 'rgba(0, 255, 204, 0.4)',
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Futura' : 'sans-serif-condensed',
+    textShadowRadius: 6,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   tagline: {
-    fontSize: 18,
-    color: '#FFDAB9',
+    fontSize: 16,
+    color: '#F5F5DC',
     marginBottom: 40,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '600',
+    letterSpacing: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'sans-serif',
   },
   quoteContainer: {
     backgroundColor: 'rgba(20, 184, 166, 0.1)',
@@ -183,6 +185,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontStyle: 'italic',
     marginBottom: 30,
+    paddingHorizontal: 20,
   },
   getStartedButton: {
     width: '100%',
@@ -201,9 +204,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
     textAlign: 'center',
+    letterSpacing: 1,
   },
   disclaimer: {
     fontSize: 14,
