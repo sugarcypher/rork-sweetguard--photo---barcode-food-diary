@@ -11,4 +11,5 @@ export default {
   warning: '#FFCC00',
   success: '#34C759',
   sugar: '#FF6B8B', // Sugar indicator color
+  error: '#FF3B30', // Error color (same as danger)
 };
