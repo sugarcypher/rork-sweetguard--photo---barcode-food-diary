@@ -15,6 +15,7 @@ import DailyReflection from '@/components/DailyReflection';
 import MainMenu from '@/components/MainMenu';
 import SugarCubeIcon from '@/components/SugarCubeIcon';
 import OnboardingTour from '@/components/OnboardingTour';
+import ProgressTracker from '@/components/ProgressTracker';
 import { Food, ReflectionData } from '@/types/food';
 import { formatDateToYYYYMMDD } from '@/utils/foodUtils';
 import { Plus, MessageCircle, BookOpen } from 'lucide-react-native';
@@ -185,6 +186,8 @@ export default function HomeScreen() {
             <View style={styles.progressContainer}>
               <SugarProgressBar currentSugar={totalSugar} />
             </View>
+            
+            {isToday() && <ProgressTracker />}
             
             {/* Alerts Section */}
             {isToday() && !dismissedAlerts.includes('threshold') && (

@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { Home, BarChart, Camera, Settings } from "lucide-react-native";
+import { Home, BarChart, Camera, Settings, Users } from "lucide-react-native";
 import Colors from "@/constants/colors";
 
 export default function TabLayout() {
@@ -44,6 +44,13 @@ export default function TabLayout() {
         options={{
           title: "Insights",
           tabBarIcon: ({ color }) => <BarChart size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: "Community",
+          tabBarIcon: ({ color }) => <Users size={24} color={color} />,
         }}
       />
       <Tabs.Screen
