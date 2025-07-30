@@ -8,6 +8,7 @@ import { useSecurityStore } from "@/store/securityStore";
 import { SecurityAlertBanner } from "@/components/SecurityAlert";
 import { EvidenceCollector } from "@/components/EvidenceCollector";
 import { ShoppingStoreProvider } from "@/store/shoppingStore";
+import { GamificationProvider } from "@/store/gamificationStore";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -70,14 +71,16 @@ export default function RootLayout() {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <ShoppingStoreProvider>
-          <EvidenceCollector>
-            <GestureHandlerRootView>
-              <SecurityAlertBanner />
-              <RootLayoutNav />
-            </GestureHandlerRootView>
-          </EvidenceCollector>
-        </ShoppingStoreProvider>
+        <GamificationProvider>
+          <ShoppingStoreProvider>
+            <EvidenceCollector>
+              <GestureHandlerRootView>
+                <SecurityAlertBanner />
+                <RootLayoutNav />
+              </GestureHandlerRootView>
+            </EvidenceCollector>
+          </ShoppingStoreProvider>
+        </GamificationProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );
