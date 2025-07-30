@@ -41,8 +41,17 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
     
     // Validate barcode format (basic validation)
     if (data && data.length >= 8) {
-      onScan(data);
-      onClose();
+      Alert.alert(
+        'Barcode Scanned',
+        'Would you like to add this item to your food log?',
+        [
+          { text: 'No', onPress: () => setScanned(false) },
+          { text: 'Yes', onPress: () => {
+            onScan(data);
+            onClose();
+          }}
+        ]
+      );
     } else {
       Alert.alert(
         'Invalid Barcode',
