@@ -53,7 +53,7 @@ const tourSteps: TourStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to SugarCypher! 🍭',
-    description: 'Let me show you around your new sugar detective toolkit. Ready to become a sugar sleuth?',
+    description: 'Let me show you around your new sugar detective toolkit. Ready to decode your diet?',
     targetArea: { x: 0, y: 0, width: screenWidth, height: screenHeight * 0.3 },
     icon: <Shield size={32} color={Colors.primary} />,
     position: 'center'
@@ -61,15 +61,15 @@ const tourSteps: TourStep[] = [
   {
     id: 'sugar_cube',
     title: 'Sugar Cube Menu 🧊',
-    description: 'Tap this sugar cube icon to access the main menu with quick actions and ShoogSniffa settings.',
+    description: 'Tap this sugar cube icon to access the main menu with quick actions, food logging, and insights.',
     targetArea: { x: 16, y: 50, width: 44, height: 44 },
     icon: <Brain size={24} color={Colors.primary} />,
     position: 'bottom'
   },
   {
     id: 'add_food',
-    title: 'Add Food Button ➕',
-    description: 'Quick access to log new foods. Tap here when you want to add something to your daily log.',
+    title: 'Quick Add Food ➕',
+    description: 'Fast access to log new foods. Tap here to jump straight to the food scanner.',
     targetArea: { x: screenWidth - 60, y: 50, width: 44, height: 44 },
     icon: <Plus size={24} color={Colors.primary} />,
     position: 'bottom'
@@ -77,7 +77,7 @@ const tourSteps: TourStep[] = [
   {
     id: 'reflection',
     title: 'Daily Reflection 💭',
-    description: 'Share how you\'re feeling about your sugar intake. ShoogSniffa loves to hear from you!',
+    description: 'Share how you\'re feeling about your sugar intake and track your wellness journey.',
     targetArea: { x: screenWidth - 104, y: 50, width: 44, height: 44 },
     icon: <MessageCircle size={24} color={Colors.primary} />,
     position: 'bottom'
@@ -91,26 +91,18 @@ const tourSteps: TourStep[] = [
     position: 'bottom'
   },
   {
-    id: 'food_diary',
-    title: 'Food Diary Button 📖',
-    description: 'Access your complete food diary from this floating button at the bottom of the screen.',
-    targetArea: { x: 20, y: screenHeight - 100, width: screenWidth - 40, height: 60 },
-    icon: <BookOpen size={24} color={Colors.primary} />,
-    position: 'top'
-  },
-  {
     id: 'tab_today',
     title: 'Today Tab 🏠',
     description: 'Your home base! See today\'s food log, sugar progress, and get personalized insights.',
-    targetArea: { x: 0, y: screenHeight - 80, width: screenWidth / 4, height: 80 },
+    targetArea: { x: 0, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
     icon: <Home size={24} color={Colors.primary} />,
     position: 'top'
   },
   {
     id: 'tab_scanner',
-    title: 'Scanner Tab 📷',
-    description: 'Your SugarCypher scanner! Take photos of food or scan barcodes to decode hidden sugars.',
-    targetArea: { x: screenWidth / 4, y: screenHeight - 80, width: screenWidth / 4, height: 80 },
+    title: 'Log Food Tab 📷',
+    description: 'Your SugarCypher scanner! Take photos of food, scan barcodes, or add foods manually.',
+    targetArea: { x: screenWidth / 6, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
     icon: <Camera size={24} color={Colors.primary} />,
     position: 'top'
   },
@@ -118,22 +110,38 @@ const tourSteps: TourStep[] = [
     id: 'tab_insights',
     title: 'Insights Tab 📈',
     description: 'Discover patterns in your sugar consumption and get personalized health insights.',
-    targetArea: { x: (screenWidth / 4) * 2, y: screenHeight - 80, width: screenWidth / 4, height: 80 },
+    targetArea: { x: (screenWidth / 6) * 2, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
     icon: <BarChart size={24} color={Colors.primary} />,
+    position: 'top'
+  },
+  {
+    id: 'tab_shopping',
+    title: 'Smart Shopping Tab 🛒',
+    description: 'Scan receipts to get a sugar score for your shopping trips and track your progress.',
+    targetArea: { x: (screenWidth / 6) * 3, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
+    icon: <ScanLine size={24} color={Colors.primary} />,
+    position: 'top'
+  },
+  {
+    id: 'tab_community',
+    title: 'Community Tab 👥',
+    description: 'Connect with others, share your progress, join challenges, and set goals together.',
+    targetArea: { x: (screenWidth / 6) * 4, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
+    icon: <MessageCircle size={24} color={Colors.primary} />,
     position: 'top'
   },
   {
     id: 'tab_settings',
     title: 'Settings Tab ⚙️',
-    description: 'Customize ShoogSniffa\'s voice, manage your data, and adjust app preferences.',
-    targetArea: { x: (screenWidth / 4) * 3, y: screenHeight - 80, width: screenWidth / 4, height: 80 },
+    description: 'Customize your experience, manage your data, and adjust app preferences.',
+    targetArea: { x: (screenWidth / 6) * 5, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
     icon: <Settings size={24} color={Colors.primary} />,
     position: 'top'
   },
   {
-    id: 'scanner_features',
-    title: 'Scanner Features 🔍',
-    description: 'In the scanner: Take photos, scan barcodes, or add foods manually. ShoogSniffa will analyze everything!',
+    id: 'gamification',
+    title: 'Gamification Features 🏆',
+    description: 'Earn points, unlock badges, compete in challenges, and climb the leaderboards!',
     targetArea: { x: 20, y: screenHeight * 0.4, width: screenWidth - 40, height: 200 },
     icon: <ScanLine size={24} color={Colors.primary} />,
     position: 'top'
@@ -141,7 +149,7 @@ const tourSteps: TourStep[] = [
   {
     id: 'complete',
     title: 'You\'re Ready! 🎉',
-    description: 'That\'s the tour! Start by scanning your first food item or exploring the sample data. ShoogSniffa is here to help!',
+    description: 'That\'s the tour! Start by scanning your first food item, joining the community, or setting your first goal. Happy sugar sleuthing!',
     targetArea: { x: 0, y: 0, width: screenWidth, height: screenHeight },
     icon: <Shield size={32} color={Colors.primary} />,
     position: 'center'
