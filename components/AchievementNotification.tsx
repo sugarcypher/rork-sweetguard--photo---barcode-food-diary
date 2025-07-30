@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { Trophy, Star, X } from 'lucide-react-native';
 import { Achievement } from '@/types/gamification';
-import { colors } from '@/constants/colors';
+import colors from '@/constants/colors';
 
 interface AchievementNotificationProps {
   achievement: Achievement;

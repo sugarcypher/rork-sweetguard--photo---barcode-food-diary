@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Badge } from '@/types/gamification';
-import { colors } from '@/constants/colors';
+import colors from '@/constants/colors';
 import { RARITY_COLORS } from '@/constants/gamification';
 
 interface BadgeDisplayProps {

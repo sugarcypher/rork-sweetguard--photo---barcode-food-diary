@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Stack } from 'expo-router';
 import { Trophy, Award, Target, Users } from 'lucide-react-native';
-import { colors } from '@/constants/colors';
+import colors from '@/constants/colors';
 import { useGamification } from '@/store/gamificationStore';
 import GamificationHeader from '@/components/GamificationHeader';
 import BadgeDisplay from '@/components/BadgeDisplay';

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Trophy, Medal, Award, Crown } from 'lucide-react-native';
 import { LeaderboardEntry } from '@/types/gamification';
-import { colors } from '@/constants/colors';
+import colors from '@/constants/colors';
 import BadgeDisplay from './BadgeDisplay';
 
 interface LeaderboardProps {

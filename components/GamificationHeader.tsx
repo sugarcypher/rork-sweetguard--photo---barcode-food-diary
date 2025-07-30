@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Trophy, Star, Zap } from 'lucide-react-native';
 import { useGamification } from '@/store/gamificationStore';
-import { colors } from '@/constants/colors';
+import colors from '@/constants/colors';
 import { LEVEL_THRESHOLDS } from '@/constants/gamification';
 
 interface GamificationHeaderProps {

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Calendar, Users, Trophy, Clock } from 'lucide-react-native';
 import { Competition } from '@/types/gamification';
-import { colors } from '@/constants/colors';
+import colors from '@/constants/colors';
 
 interface CompetitionCardProps {
   competition: Competition;
