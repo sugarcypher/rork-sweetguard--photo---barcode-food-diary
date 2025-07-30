@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert
+  Alert,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { 
@@ -218,7 +220,11 @@ export default function GoalsScreen() {
       animationType="slide"
       presentationStyle="pageSheet"
     >
-      <View style={styles.modalContainer}>
+      <KeyboardAvoidingView 
+        style={styles.modalContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>Create New Goal</Text>
           <TouchableOpacity
@@ -232,7 +238,12 @@ export default function GoalsScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={styles.modalContent} 
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.modalContentContainer}
+        >
           <View style={styles.formSection}>
             <Text style={styles.sectionTitle}>Goal Type</Text>
             <View style={styles.goalTypeGrid}>
@@ -352,7 +363,7 @@ export default function GoalsScreen() {
             <Text style={styles.createButtonText}>Create Goal</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 
@@ -637,7 +648,10 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     flex: 1,
+  },
+  modalContentContainer: {
     padding: 16,
+    paddingBottom: 32,
   },
   formSection: {
     marginBottom: 24,
