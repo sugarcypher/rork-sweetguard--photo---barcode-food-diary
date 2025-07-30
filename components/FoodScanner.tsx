@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { Scan, Type, Mic, X } from 'lucide-react-native';
 import BarcodeScanner from './BarcodeScanner';
 import MetaSweetProcessor from './MetaSweetProcessor';
@@ -390,7 +390,11 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
         presentationStyle="formSheet"
         onRequestClose={() => setManualEntryVisible(false)}
       >
-        <View style={styles.manualEntryContainer}>
+        <KeyboardAvoidingView 
+          style={styles.manualEntryContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.closeButton}
@@ -423,7 +427,7 @@ export const FoodScanner: React.FC<FoodScannerProps> = ({
               <Text style={styles.searchButtonText}>Search</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </>
   );

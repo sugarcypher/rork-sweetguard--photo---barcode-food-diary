@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Modal, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import Colors from '@/constants/colors';
 import { Heart, Zap, Brain, X } from 'lucide-react-native';
 
@@ -85,7 +85,11 @@ export default function DailyReflection({
   
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <View style={styles.container}>
+      <KeyboardAvoidingView 
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Daily Reflection</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -93,52 +97,59 @@ export default function DailyReflection({
           </TouchableOpacity>
         </View>
         
-        <Text style={styles.subtitle}>
-          How are you feeling today? This helps track patterns between your sugar intake and wellbeing.
-        </Text>
-        
-        {renderRatingScale(
-          "Energy Level",
-          <Zap size={20} color={Colors.primary} />,
-          energyLevel,
-          setEnergyLevel,
-          ["Very Low", "Low", "Moderate", "High", "Very High"]
-        )}
-        
-        {renderRatingScale(
-          "Mood",
-          <Heart size={20} color={Colors.primary} />,
-          moodLevel,
-          setMoodLevel,
-          ["Very Poor", "Poor", "Neutral", "Good", "Excellent"]
-        )}
-        
-        {renderRatingScale(
-          "Sugar Cravings",
-          <Brain size={20} color={Colors.primary} />,
-          cravings,
-          setCravings,
-          ["None", "Mild", "Moderate", "Strong", "Intense"]
-        )}
-        
-        <View style={styles.notesContainer}>
-          <Text style={styles.notesTitle}>Additional Notes (Optional)</Text>
-          <TextInput
-            style={styles.notesInput}
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="How did you feel after meals? Any observations about your sugar intake today?"
-            placeholderTextColor={Colors.subtext}
-            multiline
-            numberOfLines={4}
-            textAlignVertical="top"
-          />
-        </View>
-        
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save Reflection</Text>
-        </TouchableOpacity>
-      </View>
+        <ScrollView 
+          style={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollContentContainer}
+        >
+          <Text style={styles.subtitle}>
+            How are you feeling today? This helps track patterns between your sugar intake and wellbeing.
+          </Text>
+          
+          {renderRatingScale(
+            "Energy Level",
+            <Zap size={20} color={Colors.primary} />,
+            energyLevel,
+            setEnergyLevel,
+            ["Very Low", "Low", "Moderate", "High", "Very High"]
+          )}
+          
+          {renderRatingScale(
+            "Mood",
+            <Heart size={20} color={Colors.primary} />,
+            moodLevel,
+            setMoodLevel,
+            ["Very Poor", "Poor", "Neutral", "Good", "Excellent"]
+          )}
+          
+          {renderRatingScale(
+            "Sugar Cravings",
+            <Brain size={20} color={Colors.primary} />,
+            cravings,
+            setCravings,
+            ["None", "Mild", "Moderate", "Strong", "Intense"]
+          )}
+          
+          <View style={styles.notesContainer}>
+            <Text style={styles.notesTitle}>Additional Notes (Optional)</Text>
+            <TextInput
+              style={styles.notesInput}
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="How did you feel after meals? Any observations about your sugar intake today?"
+              placeholderTextColor={Colors.subtext}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </View>
+          
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Reflection</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -147,7 +158,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  scrollContentContainer: {
     padding: 20,
+    paddingBottom: 40,
   },
   header: {
     flexDirection: 'row',

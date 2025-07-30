@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  Alert
+  Alert,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { 
   X, 
@@ -264,7 +266,11 @@ export default function CreatePostModal({ visible, onClose }: CreatePostModalPro
       animationType="slide"
       presentationStyle="pageSheet"
     >
-      <View style={styles.container}>
+      <KeyboardAvoidingView 
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Create Post</Text>
           <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
@@ -272,7 +278,12 @@ export default function CreatePostModal({ visible, onClose }: CreatePostModalPro
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.contentContainer}
+        >
           {renderPostTypeSelector()}
 
           <View style={styles.section}>
@@ -327,7 +338,7 @@ export default function CreatePostModal({ visible, onClose }: CreatePostModalPro
             <Text style={styles.createButtonText}>Share Post</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -355,7 +366,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  contentContainer: {
     padding: 16,
+    paddingBottom: 40,
   },
   section: {
     marginBottom: 24,
