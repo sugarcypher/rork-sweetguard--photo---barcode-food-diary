@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SweetGuard: Photo & Barcode Food Diary",
-    "slug": "sweetguard-photo-barcode-food-diary",
+    "name": "SugarCypher",
+    "slug": "sugarcypher",
     "version": "2.3.7",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.rork.sweetguard-photo-barcode-food-diary",
+      "bundleIdentifier": "app.rork.sugarcypher",
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
@@ -31,7 +31,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.rork.sweetguard-photo-barcode-food-diary",
+      "package": "app.rork.sugarcypher",
       "permissions": [
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
