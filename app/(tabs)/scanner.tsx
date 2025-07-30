@@ -4,14 +4,14 @@ import { Stack } from 'expo-router';
 import BarcodeScanner from '@/components/BarcodeScanner';
 import colors from '@/constants/colors';
 import { useNavigation } from 'expo-router';
-import { useCypher } from '@/store/cypherStore';
-import { useFoodLog } from '@/store/foodLogStore';
+import { useCypherStore } from '@/store/cypherStore';
+import { useFoodLogStore } from '@/store/foodLogStore';
 
 export default function ScannerScreen() {
   const [scannerVisible, setScannerVisible] = useState(true);
   const navigation = useNavigation();
-  const { setCypherData } = useCypher();
-  const { addFood } = useFoodLog();
+  const { setCypherData } = useCypherStore();
+  const { addFood } = useFoodLogStore();
 
   const handleScan = (barcode: string) => {
     console.log('Barcode scanned in ScannerScreen:', barcode);
@@ -25,12 +25,12 @@ export default function ScannerScreen() {
         { text: 'Add to Food Log', onPress: () => {
           // Simulate adding to food log
           addFood({ id: Date.now().toString(), name: 'Scanned Food Item', sugarContent: 10, timestamp: new Date().toISOString(), hiddenSugars: [] });
-          navigation.navigate('(tabs)/log');
+          navigation.navigate({ pathname: '(tabs)/log' });
         }},
         { text: 'View Cypher Only', onPress: () => {
           // Simulate setting cypher data
           setCypherData({ barcode, info: 'Cypher information for ' + barcode });
-          navigation.navigate('(tabs)/log', { cypherOnly: true });
+          navigation.navigate({ pathname: '(tabs)/log', params: { cypherOnly: true } });
         }}
       ]
     );
