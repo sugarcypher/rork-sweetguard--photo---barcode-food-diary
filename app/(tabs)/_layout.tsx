@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
-import { Home, Camera, BarChart, Receipt, Users, Settings, Menu } from 'lucide-react-native';
+import { Home, Camera, BarChart, Receipt, Users, Settings, Menu, Scan } from 'lucide-react-native';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Colors from '@/constants/colors';
 
@@ -11,6 +11,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   const menuItems = [
     { name: 'index', title: 'Today', icon: Home },
     { name: 'log', title: 'Log Food', icon: Camera },
+    { name: 'scanner', title: 'Scanner', icon: Scan },
     { name: 'insights', title: 'Insights', icon: BarChart },
     { name: 'shopping', title: 'Shopping', icon: Receipt },
     { name: 'community', title: 'Community', icon: Users },
@@ -103,6 +104,12 @@ export default function TabLayout() {
         name="community"
         options={{
           title: 'Community',
+        }}
+      />
+      <Drawer.Screen
+        name="scanner"
+        options={{
+          title: 'Scanner',
         }}
       />
       <Drawer.Screen
