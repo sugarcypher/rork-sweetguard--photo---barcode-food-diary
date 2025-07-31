@@ -35,7 +35,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/index');
+                  router.push('/(tabs)/index');
                   props.navigation.closeDrawer();
                 }}
               >
