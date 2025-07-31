@@ -1,4 +1,4 @@
-import { Drawer } from 'expo-router/drawer';
+import { Drawer, DrawerContentComponentProps } from 'expo-router/drawer';
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { X, Home, BarChart, Camera, Settings, Users, Receipt } from "lucide-react-native";
@@ -18,7 +18,7 @@ export default function TabLayout() {
         },
         overlayColor: 'rgba(0, 0, 0, 0.5)',
       }}
-      drawerContent={(props) => {
+      drawerContent={(props: DrawerContentComponentProps) => {
         const router = useRouter();
         return (
           <View style={styles.drawerContainer}>
