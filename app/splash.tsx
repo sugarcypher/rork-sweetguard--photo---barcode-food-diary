@@ -27,6 +27,8 @@ export default function SplashScreen() {
         duration: 800,
         useNativeDriver: true,
       }),
+    ]).start();
+    
     Animated.loop(
       Animated.sequence([
         Animated.timing(highlightAnim, {
@@ -40,8 +42,7 @@ export default function SplashScreen() {
           useNativeDriver: true,
         }),
       ])
-    )
-    ]).start();
+    ).start();
   }, [fadeAnim, slideAnim, highlightAnim]);
   
 
