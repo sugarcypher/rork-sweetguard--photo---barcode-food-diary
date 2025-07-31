@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
-import { Home, Camera, BarChart, Receipt, Users, Settings, Menu, Scan } from 'lucide-react-native';
+import { Home, Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-react-native';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Colors from '@/constants/colors';
 
@@ -21,7 +21,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <View style={styles.drawerContainer}>
       <View style={styles.drawerHeader}>
-        <Text style={styles.drawerTitle}>Menu</Text>
+        <Text style={styles.drawerTitle}>SugarCypher</Text>
       </View>
       {menuItems.map((item, index) => {
         const isActive = state.index === index;
@@ -60,18 +60,9 @@ export default function TabLayout() {
           backgroundColor: Colors.card,
         },
         headerTintColor: Colors.text,
-        headerLeft: ({ tintColor }) => (
-          <TouchableOpacity 
-            style={styles.menuButton}
-            onPress={() => {
-              // This will be handled by the drawer automatically
-            }}
-          >
-            <Menu size={24} color={tintColor} />
-          </TouchableOpacity>
-        ),
+        headerLeft: () => null,
         drawerStyle: {
-          backgroundColor: Colors.background,
+          backgroundColor: Colors.card,
           width: 280,
         },
       }}
@@ -125,7 +116,7 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.card,
     paddingTop: 50,
   },
   drawerHeader: {
@@ -137,7 +128,7 @@ const styles = StyleSheet.create({
   drawerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: Colors.text,
+    color: Colors.primary,
   },
   drawerItem: {
     flexDirection: 'row',
@@ -159,8 +150,6 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontWeight: '600',
   },
-  menuButton: {
-    marginLeft: 15,
-  },
+
 });
 
