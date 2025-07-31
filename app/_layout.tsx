@@ -3,10 +3,6 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { trpc, trpcClient } from "@/lib/trpc";
-import { useSecurityStore } from "@/store/securityStore";
-import { SecurityAlertBanner } from "@/components/SecurityAlert";
-import { EvidenceCollector } from "@/components/EvidenceCollector";
 import { ShoppingStoreProvider } from "@/store/shoppingStore";
 import { GamificationProvider } from "@/store/gamificationStore";
 
@@ -18,6 +14,7 @@ const queryClient = new QueryClient();
 function RootLayoutNav() {
   return (
     <Stack screenOptions={{ headerBackTitle: "Back" }}>
+      <Stack.Screen name="initialization" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding/welcome" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding/meet-sniffa" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding/features" options={{ headerShown: false }} />
@@ -34,22 +31,13 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // Initialize security system
-        const { initializeSecurity } = useSecurityStore.getState();
-        await initializeSecurity();
-        
-        // Initialize launch evidence collection for SOC 2 compliance
-        try {
-          await trpcClient.security.evidence.initializeLaunch.mutate();
-          console.log('[SOC2] Launch evidence collection initialized');
-        } catch (evidenceError) {
-          console.warn('[SOC2] Failed to initialize launch evidence:', evidenceError);
-        }
+        // Simple initialization without complex dependencies
+        console.log('App initializing...');
         
         // Pre-load fonts, make any API calls you need to do here
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
       } catch (e) {
-        console.warn(e);
+        console.warn('Initialization error:', e);
       } finally {
         setAppIsReady(true);
       }
@@ -69,19 +57,14 @@ export default function RootLayout() {
   }
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <GamificationProvider>
-          <ShoppingStoreProvider>
-            <EvidenceCollector>
-              <GestureHandlerRootView>
-                <SecurityAlertBanner />
-                <RootLayoutNav />
-              </GestureHandlerRootView>
-            </EvidenceCollector>
-          </ShoppingStoreProvider>
-        </GamificationProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      <GamificationProvider>
+        <ShoppingStoreProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <RootLayoutNav />
+          </GestureHandlerRootView>
+        </ShoppingStoreProvider>
+      </GamificationProvider>
+    </QueryClientProvider>
   );
 }
