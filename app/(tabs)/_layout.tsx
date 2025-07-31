@@ -1,64 +1,159 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
-import { Home, Camera, BarChart, Receipt, Users, Settings } from 'lucide-react-native';
+import { Drawer } from 'expo-router/drawer';
+import { DrawerContentComponentProps } from '@react-navigation/drawer';
+import { Home, Camera, BarChart, Receipt, Users, Settings, Menu } from 'lucide-react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Colors from '@/constants/colors';
+
+function CustomDrawerContent(props: DrawerContentComponentProps) {
+  const { navigation, state } = props;
+  
+  const menuItems = [
+    { name: 'index', title: 'Today', icon: Home },
+    { name: 'log', title: 'Log Food', icon: Camera },
+    { name: 'insights', title: 'Insights', icon: BarChart },
+    { name: 'shopping', title: 'Shopping', icon: Receipt },
+    { name: 'community', title: 'Community', icon: Users },
+    { name: 'settings', title: 'Settings', icon: Settings },
+  ];
+
+  return (
+    <View style={styles.drawerContainer}>
+      <View style={styles.drawerHeader}>
+        <Text style={styles.drawerTitle}>Menu</Text>
+      </View>
+      {menuItems.map((item, index) => {
+        const isActive = state.index === index;
+        const IconComponent = item.icon;
+        
+        return (
+          <TouchableOpacity
+            key={item.name}
+            style={[styles.drawerItem, isActive && styles.drawerItemActive]}
+            onPress={() => {
+              navigation.navigate(item.name as any);
+              navigation.closeDrawer();
+            }}
+          >
+            <IconComponent 
+              size={24} 
+              color={isActive ? Colors.primary : Colors.subtext} 
+            />
+            <Text style={[styles.drawerItemText, isActive && styles.drawerItemTextActive]}>
+              {item.title}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
 
 export default function TabLayout() {
   return (
-    <Tabs
+    <Drawer
+      drawerContent={CustomDrawerContent}
       screenOptions={{
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.subtext,
-        tabBarStyle: {
+        headerShown: true,
+        headerStyle: {
           backgroundColor: Colors.card,
-          borderTopColor: Colors.border,
         },
-        headerShown: false,
+        headerTintColor: Colors.text,
+        headerLeft: ({ tintColor }) => (
+          <TouchableOpacity 
+            style={styles.menuButton}
+            onPress={() => {
+              // This will be handled by the drawer automatically
+            }}
+          >
+            <Menu size={24} color={tintColor} />
+          </TouchableOpacity>
+        ),
+        drawerStyle: {
+          backgroundColor: Colors.background,
+          width: 280,
+        },
       }}
     >
-      <Tabs.Screen
+      <Drawer.Screen
         name="index"
         options={{
           title: 'Today',
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="log"
         options={{
           title: 'Log Food',
-          tabBarIcon: ({ color, size }) => <Camera size={size} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="insights"
         options={{
           title: 'Insights',
-          tabBarIcon: ({ color, size }) => <BarChart size={size} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="shopping"
         options={{
           title: 'Shopping',
-          tabBarIcon: ({ color, size }) => <Receipt size={size} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="community"
         options={{
           title: 'Community',
-          tabBarIcon: ({ color, size }) => <Users size={size} color={color} />,
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color, size }) => <Settings size={size} color={color} />,
         }}
       />
-    </Tabs>
+    </Drawer>
   );
 }
+
+const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    paddingTop: 50,
+  },
+  drawerHeader: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    marginBottom: 10,
+  },
+  drawerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.text,
+  },
+  drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginHorizontal: 10,
+    borderRadius: 8,
+  },
+  drawerItemActive: {
+    backgroundColor: Colors.primary + '20',
+  },
+  drawerItemText: {
+    marginLeft: 15,
+    fontSize: 16,
+    color: Colors.subtext,
+  },
+  drawerItemTextActive: {
+    color: Colors.primary,
+    fontWeight: '600',
+  },
+  menuButton: {
+    marginLeft: 15,
+  },
+});
 
