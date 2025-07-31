@@ -1,9 +1,8 @@
 import { Drawer } from 'expo-router/drawer';
-import React, { useState } from "react";
+import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { Menu, X } from 'lucide-react-native';
+import { X, Home, BarChart, Camera, Settings, Users, Receipt } from "lucide-react-native";
 import { useRouter } from 'expo-router';
-import { Home, BarChart, Camera, Settings, Users, Receipt } from "lucide-react-native";
 import Colors from "@/constants/colors";
 
 export default function TabLayout() {
@@ -19,7 +18,7 @@ export default function TabLayout() {
         },
         overlayColor: 'rgba(0, 0, 0, 0.5)',
       }}
-      drawerContent={(props) => {
+      drawerContent={(props: any) => {
         const router = useRouter();
         return (
           <View style={styles.drawerContainer}>
@@ -36,7 +35,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/(tabs)/index');
+                  router.push('/index');
                   props.navigation.closeDrawer();
                 }}
               >
