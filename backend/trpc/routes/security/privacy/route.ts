@@ -3,7 +3,7 @@ import { publicProcedure } from '../../../create-context';
 import { TRPCError } from '@trpc/server';
 
 // Privacy level enum
-const PrivacyLevel = z.enum(['minimal', 'standard', 'enhanced', 'maximum']);
+const PrivacyLevel = z.enum(['minimal', 'standard', 'enhanced', 'maximum', 'community_restricted']);
 
 // Data classification enum
 const DataClassification = z.enum(['public', 'internal', 'confidential', 'restricted']);
@@ -16,7 +16,9 @@ const privacySettingsSchema = z.object({
   allowAnalytics: z.boolean(),
   allowCrashReporting: z.boolean(),
   shareUsageData: z.boolean(),
-  localProcessingOnly: z.boolean()
+  localProcessingOnly: z.boolean(),
+  allowCommunitySharing: z.boolean().default(false), // Control community data sharing
+  communityDataAnonymization: z.boolean().default(true) // Anonymize community data by default
 });
 
 // Data processing request schema
@@ -38,7 +40,7 @@ const dataDeletionSchema = z.object({
 // Consent management schema
 const consentSchema = z.object({
   userId: z.string(),
-  consentType: z.enum(['analytics', 'marketing', 'functional', 'necessary']),
+  consentType: z.enum(['analytics', 'marketing', 'functional', 'necessary', 'community_sharing']),
   granted: z.boolean(),
   timestamp: z.number(),
   version: z.string().optional()
@@ -155,6 +157,8 @@ export const getPrivacySettingsProcedure = publicProcedure
         allowCrashReporting: true,
         shareUsageData: false,
         localProcessingOnly: false,
+        allowCommunitySharing: false,
+        communityDataAnonymization: true,
         createdAt: Date.now()
       };
       
@@ -240,7 +244,8 @@ export const getConsentStatusProcedure = publicProcedure
         analytics: false,
         marketing: false,
         functional: false,
-        necessary: true // Always true for necessary cookies
+        necessary: true, // Always true for necessary cookies
+        community_sharing: false
       };
       
       activeConsents.forEach(consent => {
