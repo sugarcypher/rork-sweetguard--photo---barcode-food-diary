@@ -1,9 +1,89 @@
-import { Drawer, DrawerContentComponentProps } from 'expo-router/drawer';
+import { Drawer } from 'expo-router/drawer';
+import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { X, Home, BarChart, Camera, Settings, Users, Receipt } from "lucide-react-native";
 import { useRouter } from 'expo-router';
 import Colors from "@/constants/colors";
+
+function CustomDrawerContent(props: DrawerContentComponentProps) {
+  const router = useRouter();
+  return (
+    <View style={styles.drawerContainer}>
+      <View style={styles.drawerHeader}>
+        <Text style={styles.drawerTitle}>Menu</Text>
+        <TouchableOpacity
+          onPress={() => props.navigation.closeDrawer()}
+          style={styles.closeButton}
+        >
+          <X size={24} color={Colors.text} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.drawerContent}>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            router.push('./index');
+            props.navigation.closeDrawer();
+          }}
+        >
+          <Home size={24} color={Colors.subtext} />
+          <Text style={styles.drawerText}>Today</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            router.push('./log');
+            props.navigation.closeDrawer();
+          }}
+        >
+          <Camera size={24} color={Colors.subtext} />
+          <Text style={styles.drawerText}>Log Food</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            router.push('./insights');
+            props.navigation.closeDrawer();
+          }}
+        >
+          <BarChart size={24} color={Colors.subtext} />
+          <Text style={styles.drawerText}>Insights</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            router.push('./shopping');
+            props.navigation.closeDrawer();
+          }}
+        >
+          <Receipt size={24} color={Colors.subtext} />
+          <Text style={styles.drawerText}>Shopping</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            router.push('./community');
+            props.navigation.closeDrawer();
+          }}
+        >
+          <Users size={24} color={Colors.subtext} />
+          <Text style={styles.drawerText}>Community</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.drawerItem}
+          onPress={() => {
+            router.push('./settings');
+            props.navigation.closeDrawer();
+          }}
+        >
+          <Settings size={24} color={Colors.subtext} />
+          <Text style={styles.drawerText}>Settings</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
 
 export default function TabLayout() {
   return (
@@ -18,84 +98,8 @@ export default function TabLayout() {
         },
         overlayColor: 'rgba(0, 0, 0, 0.5)',
       }}
-      drawerContent={(props: DrawerContentComponentProps) => {
-        const router = useRouter();
-        return (
-          <View style={styles.drawerContainer}>
-            <View style={styles.drawerHeader}>
-              <Text style={styles.drawerTitle}>Menu</Text>
-              <TouchableOpacity
-                onPress={() => props.navigation.closeDrawer()}
-                style={styles.closeButton}
-              >
-                <X size={24} color={Colors.text} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.drawerContent}>
-              <TouchableOpacity
-                style={styles.drawerItem}
-                onPress={() => {
-                  router.push('./index');
-                  props.navigation.closeDrawer();
-                }}
-              >
-                <Home size={24} color={Colors.subtext} />
-                <Text style={styles.drawerText}>Today</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.drawerItem}
-                onPress={() => {
-                  router.push('./log');
-                  props.navigation.closeDrawer();
-                }}
-              >
-                <Camera size={24} color={Colors.subtext} />
-                <Text style={styles.drawerText}>Log Food</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.drawerItem}
-                onPress={() => {
-                  router.push('./insights');
-                  props.navigation.closeDrawer();
-                }}
-              >
-                <BarChart size={24} color={Colors.subtext} />
-                <Text style={styles.drawerText}>Insights</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.drawerItem}
-                onPress={() => {
-                  router.push('./shopping');
-                  props.navigation.closeDrawer();
-                }}
-              >
-                <Receipt size={24} color={Colors.subtext} />
-                <Text style={styles.drawerText}>Shopping</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.drawerItem}
-                onPress={() => {
-                  router.push('./community');
-                  props.navigation.closeDrawer();
-                }}
-              >
-                <Users size={24} color={Colors.subtext} />
-                <Text style={styles.drawerText}>Community</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.drawerItem}
-                onPress={() => {
-                  router.push('./settings');
-                  props.navigation.closeDrawer();
-                }}
-              >
-                <Settings size={24} color={Colors.subtext} />
-                <Text style={styles.drawerText}>Settings</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        );
-      }}
+      drawerContent={CustomDrawerContent}
+
     >
       <Drawer.Screen name="index" />
       <Drawer.Screen name="log" />
