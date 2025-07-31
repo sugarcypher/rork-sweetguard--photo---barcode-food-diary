@@ -10,6 +10,7 @@ export default function SplashScreen() {
   const router = useRouter();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(50)).current;
+  const highlightAnim = React.useRef(new Animated.Value(0)).current;
   
   const [currentFact] = useState<SugarFact>(() => getRandomFact());
   const [currentQuote] = useState<InspirationalQuote>(() => getRandomQuote());
@@ -25,9 +26,23 @@ export default function SplashScreen() {
         toValue: 0,
         duration: 800,
         useNativeDriver: true,
-      })
+      }),
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(highlightAnim, {
+          toValue: 1,
+          duration: 1200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(highlightAnim, {
+          toValue: 0.2,
+          duration: 1200,
+          useNativeDriver: true,
+        }),
+      ])
+    )
     ]).start();
-  }, [fadeAnim, slideAnim]);
+  }, [fadeAnim, slideAnim, highlightAnim]);
   
 
   
@@ -83,6 +98,12 @@ export default function SplashScreen() {
           onPress={handleGetStarted}
           activeOpacity={0.8}
         >
+          <Animated.View 
+            style={[
+              styles.buttonHighlight,
+              { opacity: highlightAnim }
+            ]} 
+          />
           <LinearGradient
             colors={['#8B5CF6', '#A855F7']}
             style={styles.buttonGradient}
@@ -208,6 +229,18 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textAlign: 'center',
     letterSpacing: 1,
+  },
+  buttonHighlight: {
+    position: 'absolute',
+    top: -6,
+    left: -6,
+    right: -6,
+    bottom: -6,
+    borderRadius: 22,
+    borderWidth: 3,
+    borderColor: 'rgba(147, 51, 234, 0.6)',
+    backgroundColor: 'rgba(147, 51, 234, 0.15)',
+    zIndex: -1,
   },
   disclaimer: {
     fontSize: 14,
