@@ -22,6 +22,7 @@ interface PrivacySettings {
   allowCrashReporting: boolean;
   shareUsageData: boolean;
   localProcessingOnly: boolean;
+  shareCommunityData: boolean;
 }
 
 interface ConsentRecord {
@@ -91,7 +92,8 @@ const defaultPrivacySettings: PrivacySettings = {
   allowAnalytics: false,
   allowCrashReporting: true,
   shareUsageData: false,
-  localProcessingOnly: true
+  localProcessingOnly: true,
+  shareCommunityData: false
 };
 
 export const useSecurityStore = create<SecurityState>()(
