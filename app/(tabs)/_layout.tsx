@@ -1,72 +1,149 @@
-import { Tabs } from "expo-router";
-import React from "react";
+import { Drawer } from 'expo-router/drawer';
+import React, { useState } from "react";
+import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { Menu, X } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { Home, BarChart, Camera, Settings, Users, Receipt } from "lucide-react-native";
 import Colors from "@/constants/colors";
 
 export default function TabLayout() {
   return (
-    <Tabs
+    <Drawer
       screenOptions={{
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.subtext,
-        tabBarStyle: {
+        headerShown: false,
+        drawerPosition: 'left',
+        drawerType: 'front',
+        drawerStyle: {
           backgroundColor: Colors.card,
-          borderTopColor: Colors.border,
+          width: 250,
         },
-        headerStyle: {
-          backgroundColor: Colors.card,
-        },
-        headerTitleStyle: {
-          color: Colors.text,
-          fontWeight: '600',
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-        },
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
+      }}
+      drawerContent={(props) => {
+        const router = useRouter();
+        return (
+          <View style={styles.drawerContainer}>
+            <View style={styles.drawerHeader}>
+              <Text style={styles.drawerTitle}>Menu</Text>
+              <TouchableOpacity
+                onPress={() => props.navigation.closeDrawer()}
+                style={styles.closeButton}
+              >
+                <X size={24} color={Colors.text} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.drawerContent}>
+              <TouchableOpacity
+                style={styles.drawerItem}
+                onPress={() => {
+                  router.push('/(tabs)/index');
+                  props.navigation.closeDrawer();
+                }}
+              >
+                <Home size={24} color={Colors.subtext} />
+                <Text style={styles.drawerText}>Today</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.drawerItem}
+                onPress={() => {
+                  router.push('/(tabs)/log');
+                  props.navigation.closeDrawer();
+                }}
+              >
+                <Camera size={24} color={Colors.subtext} />
+                <Text style={styles.drawerText}>Log Food</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.drawerItem}
+                onPress={() => {
+                  router.push('/(tabs)/insights');
+                  props.navigation.closeDrawer();
+                }}
+              >
+                <BarChart size={24} color={Colors.subtext} />
+                <Text style={styles.drawerText}>Insights</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.drawerItem}
+                onPress={() => {
+                  router.push('/(tabs)/shopping');
+                  props.navigation.closeDrawer();
+                }}
+              >
+                <Receipt size={24} color={Colors.subtext} />
+                <Text style={styles.drawerText}>Shopping</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.drawerItem}
+                onPress={() => {
+                  router.push('/(tabs)/community');
+                  props.navigation.closeDrawer();
+                }}
+              >
+                <Users size={24} color={Colors.subtext} />
+                <Text style={styles.drawerText}>Community</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.drawerItem}
+                onPress={() => {
+                  router.push('/(tabs)/settings');
+                  props.navigation.closeDrawer();
+                }}
+              >
+                <Settings size={24} color={Colors.subtext} />
+                <Text style={styles.drawerText}>Settings</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Today",
-          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="log"
-        options={{
-          title: "Log Food",
-          tabBarIcon: ({ color }) => <Camera size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="insights"
-        options={{
-          title: "Insights",
-          tabBarIcon: ({ color }) => <BarChart size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="shopping"
-        options={{
-          title: "Shopping",
-          tabBarIcon: ({ color }) => <Receipt size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="community"
-        options={{
-          title: "Community",
-          tabBarIcon: ({ color }) => <Users size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => <Settings size={24} color={color} />,
-        }}
-      />
-    </Tabs>
+      <Drawer.Screen name="index" />
+      <Drawer.Screen name="log" />
+      <Drawer.Screen name="insights" />
+      <Drawer.Screen name="shopping" />
+      <Drawer.Screen name="community" />
+      <Drawer.Screen name="settings" />
+    </Drawer>
   );
 }
+
+const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+    backgroundColor: Colors.card,
+    paddingTop: 50,
+  },
+  drawerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  drawerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: Colors.text,
+  },
+  closeButton: {
+    padding: 8,
+  },
+  drawerContent: {
+    flex: 1,
+    paddingTop: 16,
+  },
+  drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  drawerText: {
+    marginLeft: 16,
+    fontSize: 16,
+    color: Colors.text,
+  },
+});
