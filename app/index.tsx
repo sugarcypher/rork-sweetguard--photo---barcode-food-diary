@@ -5,8 +5,8 @@ export default function Index() {
   const router = useRouter();
   
   useEffect(() => {
-    // Redirect to splash screen immediately
-    router.replace('/splash');
+    // Redirect to initialization screen first
+    router.replace('/initialization');
   }, [router]);
   
   return null;
