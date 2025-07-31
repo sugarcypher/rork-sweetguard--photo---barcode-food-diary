@@ -18,7 +18,7 @@ export default function TabLayout() {
         },
         overlayColor: 'rgba(0, 0, 0, 0.5)',
       }}
-      drawerContent={(props: any) => {
+      drawerContent={(props) => {
         const router = useRouter();
         return (
           <View style={styles.drawerContainer}>
@@ -35,7 +35,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/(tabs)/index');
+                  router.push('./index');
                   props.navigation.closeDrawer();
                 }}
               >
@@ -45,7 +45,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/(tabs)/log');
+                  router.push('./log');
                   props.navigation.closeDrawer();
                 }}
               >
@@ -55,7 +55,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/(tabs)/insights');
+                  router.push('./insights');
                   props.navigation.closeDrawer();
                 }}
               >
@@ -65,7 +65,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/(tabs)/shopping');
+                  router.push('./shopping');
                   props.navigation.closeDrawer();
                 }}
               >
@@ -75,7 +75,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/(tabs)/community');
+                  router.push('./community');
                   props.navigation.closeDrawer();
                 }}
               >
@@ -85,7 +85,7 @@ export default function TabLayout() {
               <TouchableOpacity
                 style={styles.drawerItem}
                 onPress={() => {
-                  router.push('/(tabs)/settings');
+                  router.push('./settings');
                   props.navigation.closeDrawer();
                 }}
               >
