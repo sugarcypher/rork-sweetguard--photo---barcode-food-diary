@@ -3,13 +3,18 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { ShoppingStoreProvider } from "@/store/shoppingStore";
-import { GamificationProvider } from "@/store/gamificationStore";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 function RootLayoutNav() {
   return (
@@ -32,11 +37,10 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // Simple initialization without complex dependencies
         console.log('App initializing...');
         
-        // Pre-load fonts, make any API calls you need to do here
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Minimal initialization to avoid Hermes issues
+        await new Promise(resolve => setTimeout(resolve, 50));
       } catch (e) {
         console.warn('Initialization error:', e);
       } finally {
@@ -49,7 +53,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (appIsReady) {
-      SplashScreen.hideAsync();
+      SplashScreen.hideAsync().catch(console.warn);
     }
   }, [appIsReady]);
 
@@ -59,13 +63,9 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GamificationProvider>
-        <ShoppingStoreProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <RootLayoutNav />
-          </GestureHandlerRootView>
-        </ShoppingStoreProvider>
-      </GamificationProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <RootLayoutNav />
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }

@@ -1,52 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Animated, Platform, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getRandomFact, getRandomQuote, SugarFact, InspirationalQuote } from '@/constants/sugarEducation';
+import { sugarEducationLibrary, inspirationalQuotes, SugarFact, InspirationalQuote } from '@/constants/sugarEducation';
 
 export default function SplashScreen() {
   const router = useRouter();
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const slideAnim = React.useRef(new Animated.Value(50)).current;
-  const highlightAnim = React.useRef(new Animated.Value(0)).current;
   
-  const [currentFact] = useState<SugarFact>(() => getRandomFact());
-  const [currentQuote] = useState<InspirationalQuote>(() => getRandomQuote());
+  const [currentFact] = useState<SugarFact>(() => {
+    const randomIndex = Math.floor(Math.random() * sugarEducationLibrary.length);
+    return sugarEducationLibrary[randomIndex];
+  });
+  
+  const [currentQuote] = useState<InspirationalQuote>(() => {
+    const randomIndex = Math.floor(Math.random() * inspirationalQuotes.length);
+    return inspirationalQuotes[randomIndex];
+  });
   
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-    ]).start();
-    
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(highlightAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(highlightAnim, {
-          toValue: 0.3,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [fadeAnim, slideAnim, highlightAnim]);
-  
-
+    console.log('SplashScreen mounted');
+  }, []);
   
   const handleGetStarted = () => {
+    console.log('Navigating to tabs');
     router.replace('/(tabs)');
   };
   
@@ -55,15 +32,7 @@ export default function SplashScreen() {
       colors={[Colors.background, '#0A0A0A']}
       style={styles.container}
     >
-      <Animated.View 
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
-        ]}
-      >
+      <View style={styles.content}>
         <View style={styles.iconContainer}>
           <Image 
             source={{ uri: 'https://r2-pub.rork.com/attachments/zbqmpigoa27m6qt9ms38n' }}
@@ -77,7 +46,7 @@ export default function SplashScreen() {
         
         <View style={styles.quoteContainer}>
           <Text style={styles.inspirationalText}>
-            &quot;{currentQuote.text}&quot;
+            "{currentQuote.text}"
           </Text>
           {currentQuote.author && (
             <Text style={styles.quoteAuthor}>
@@ -102,12 +71,6 @@ export default function SplashScreen() {
           onPress={handleGetStarted}
           activeOpacity={0.8}
         >
-          <Animated.View 
-            style={[
-              styles.buttonHighlight,
-              { opacity: highlightAnim }
-            ]} 
-          />
           <LinearGradient
             colors={['#8B5CF6', '#A855F7']}
             style={styles.buttonGradient}
@@ -121,7 +84,7 @@ export default function SplashScreen() {
         <Text style={styles.disclaimer}>
           Start your journey to a healthier, sugar-conscious lifestyle today.
         </Text>
-      </Animated.View>
+      </View>
     </LinearGradient>
   );
 }
@@ -238,23 +201,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 1,
   },
-  buttonHighlight: {
-    position: 'absolute',
-    top: -8,
-    left: -8,
-    right: -8,
-    bottom: -8,
-    borderRadius: 24,
-    borderWidth: 4,
-    borderColor: 'rgba(147, 51, 234, 0.7)',
-    backgroundColor: 'rgba(147, 51, 234, 0.2)',
-    zIndex: -1,
-    shadowColor: 'rgba(147, 51, 234, 0.5)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
-    elevation: 10,
-  },
+
   disclaimer: {
     fontSize: 14,
     color: '#FFDAB9',

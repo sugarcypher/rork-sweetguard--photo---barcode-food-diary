@@ -4,18 +4,20 @@ import { Home, Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-r
 import Colors from '@/constants/colors';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import ShoogSniffaAvatar from '@/components/ShoogSniffaAvatar';
 
 function CustomDrawerContent(props: any) {
+  const router = useRouter();
+  
   const routes = [
-    { name: 'index', title: 'Today', icon: Home },
-    { name: 'log', title: 'Log Food', icon: Camera },
-    { name: 'scanner', title: 'Scanner', icon: Scan },
-    { name: 'insights', title: 'Insights', icon: BarChart },
-    { name: 'shopping', title: 'Shopping', icon: Receipt },
-    { name: 'community', title: 'Community', icon: Users },
-    { name: 'settings', title: 'Settings', icon: Settings },
+    { name: 'index', title: 'Today', icon: Home, path: '/(tabs)' },
+    { name: 'log', title: 'Log Food', icon: Camera, path: '/(tabs)/log' },
+    { name: 'scanner', title: 'Scanner', icon: Scan, path: '/(tabs)/scanner' },
+    { name: 'insights', title: 'Insights', icon: BarChart, path: '/(tabs)/insights' },
+    { name: 'shopping', title: 'Shopping', icon: Receipt, path: '/(tabs)/shopping' },
+    { name: 'community', title: 'Community', icon: Users, path: '/(tabs)/community' },
+    { name: 'settings', title: 'Settings', icon: Settings, path: '/(tabs)/settings' },
   ];
 
   return (
@@ -36,28 +38,10 @@ function CustomDrawerContent(props: any) {
               key={route.name}
               style={[styles.drawerItem, isActive && styles.drawerItemActive]}
               onPress={() => {
-                switch (route.name) {
-                  case 'index':
-                    router.push('/');
-                    break;
-                  case 'log':
-                    router.push('/log');
-                    break;
-                  case 'scanner':
-                    router.push('/scanner');
-                    break;
-                  case 'insights':
-                    router.push('/insights');
-                    break;
-                  case 'shopping':
-                    router.push('/shopping');
-                    break;
-                  case 'community':
-                    router.push('/community');
-                    break;
-                  case 'settings':
-                    router.push('/settings');
-                    break;
+                try {
+                  router.push(route.path as any);
+                } catch (error) {
+                  console.warn('Navigation error:', error);
                 }
               }}
             >

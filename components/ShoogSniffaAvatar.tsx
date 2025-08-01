@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Eye, Zap } from 'lucide-react-native';
 
@@ -14,44 +14,6 @@ export default function ShoogSniffaAvatar({
   animated = false,
   mood = 'normal' 
 }: ShoogSniffaAvatarProps) {
-  const pulseAnim = React.useRef(new Animated.Value(1)).current;
-  const glowAnim = React.useRef(new Animated.Value(0)).current;
-  
-  useEffect(() => {
-    if (animated) {
-      // Pulse animation
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, {
-            toValue: 1.1,
-            duration: 1500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(pulseAnim, {
-            toValue: 1,
-            duration: 1500,
-            useNativeDriver: true,
-          })
-        ])
-      ).start();
-      
-      // Glow animation
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: 2000,
-            useNativeDriver: true,
-          })
-        ])
-      ).start();
-    }
-  }, [animated]);
   
   const getMoodColors = (): [string, string] => {
     switch (mood) {
@@ -80,34 +42,15 @@ export default function ShoogSniffaAvatar({
   };
   
   return (
-    <Animated.View 
+    <View 
       style={[
         styles.container,
         {
           width: size,
           height: size,
-          transform: animated ? [{ scale: pulseAnim }] : []
         }
       ]}
     >
-      {/* Glow effect */}
-      {animated && (
-        <Animated.View
-          style={[
-            styles.glow,
-            {
-              width: size * 1.4,
-              height: size * 1.4,
-              borderRadius: size * 0.7,
-              opacity: glowAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.3, 0.8]
-              })
-            }
-          ]}
-        />
-      )}
-      
       {/* Main avatar */}
       <LinearGradient
         colors={getMoodColors()}
@@ -143,7 +86,7 @@ export default function ShoogSniffaAvatar({
           height: size * 0.1 
         }]} />
       </LinearGradient>
-    </Animated.View>
+    </View>
   );
 }
 
