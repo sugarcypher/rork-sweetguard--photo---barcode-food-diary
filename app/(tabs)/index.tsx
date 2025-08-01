@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, StatusBar, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
 import { DesignSystem, PremiumColors } from '@/constants/designSystem';
-import { Camera, BarChart, Receipt, Users, Settings, Scan, Sparkles, TrendingUp, Zap, Shield } from 'lucide-react-native';
+import { Camera, BarChart, Receipt, Users, Settings, Scan, Zap, Shield } from 'lucide-react-native';
 import { useTourStore } from '@/store/tourStore';
 import OnboardingTour from '@/components/OnboardingTour';
 import EnterpriseCard from '@/components/ui/EnterpriseCard';
 import EnterpriseButton from '@/components/ui/EnterpriseButton';
-import EnterpriseHeader from '@/components/ui/EnterpriseHeader';
 
 const { width } = Dimensions.get('window');
 
@@ -92,21 +91,35 @@ export default function TabsIndex() {
     <>
       <StatusBar barStyle="light-content" backgroundColor={PremiumColors.background.primary} />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Enterprise Hero Header */}
-        <EnterpriseHeader
-          title="SugarCypher"
-          subtitle="Decode Hidden Sugars, Live Healthier"
-          icon={<Sparkles size={28} color="white" />}
-          variant="gradient"
-          rightAction={
-            <View style={styles.heroStats}>
-              <View style={styles.statBadge}>
-                <Shield size={14} color={PremiumColors.semantic.success} />
-                <Text style={styles.statText}>Enterprise</Text>
+        {/* Enterprise Hero Header with Logo */}
+        <View style={styles.heroContainer}>
+          <LinearGradient
+            colors={[PremiumColors.brand.primary, PremiumColors.brand.primaryLight, PremiumColors.brand.secondary]}
+            style={styles.heroGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <View style={styles.heroContent}>
+              <View style={styles.logoSection}>
+                <Image
+                  source={{ uri: 'https://r2-pub.rork.com/generated-images/263194d2-3064-4390-9fa0-74ddaee7584b.png' }}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+                <View style={styles.logoTextContainer}>
+                  <Text style={styles.logoTitle}>SugarCypher</Text>
+                  <Text style={styles.logoSubtitle}>Decode Hidden Sugars, Live Healthier</Text>
+                </View>
+              </View>
+              <View style={styles.heroStats}>
+                <View style={styles.statBadge}>
+                  <Shield size={14} color={PremiumColors.semantic.success} />
+                  <Text style={styles.statText}>Enterprise</Text>
+                </View>
               </View>
             </View>
-          }
-        />
+          </LinearGradient>
+        </View>
         
         {/* Premium Quick Actions */}
         <View style={styles.featuredSection}>
@@ -204,7 +217,48 @@ const styles = StyleSheet.create({
     backgroundColor: PremiumColors.background.primary,
   },
   
-  // Hero Stats
+  // Hero Section with Logo
+  heroContainer: {
+    borderRadius: DesignSystem.borderRadius.xl,
+    overflow: 'hidden',
+    marginHorizontal: DesignSystem.spacing.lg,
+    marginTop: DesignSystem.spacing.lg,
+    marginBottom: DesignSystem.spacing.lg,
+    ...DesignSystem.shadows.lg,
+  },
+  heroGradient: {
+    padding: DesignSystem.spacing.xl,
+  },
+  heroContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  logoSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  logoImage: {
+    width: 64,
+    height: 64,
+    marginRight: DesignSystem.spacing.md,
+  },
+  logoTextContainer: {
+    flex: 1,
+  },
+  logoTitle: {
+    ...DesignSystem.typography.h2,
+    color: 'white',
+    fontWeight: '800',
+    marginBottom: 4,
+    letterSpacing: -0.5,
+  },
+  logoSubtitle: {
+    ...DesignSystem.typography.body2,
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '500',
+  },
   heroStats: {
     alignItems: 'center',
   },
