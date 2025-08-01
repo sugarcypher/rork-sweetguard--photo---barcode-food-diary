@@ -4,6 +4,14 @@ import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sugarEducationLibrary, inspirationalQuotes, SugarFact, InspirationalQuote } from '@/constants/sugarEducation';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withRepeat, 
+  withTiming, 
+  interpolate,
+  Easing
+} from 'react-native-reanimated';
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -18,8 +26,21 @@ export default function SplashScreen() {
     return inspirationalQuotes[randomIndex];
   });
   
+  // Animation for the glowing highlight
+  const glowAnimation = useSharedValue(0);
+  
   useEffect(() => {
     console.log('SplashScreen mounted');
+    
+    // Start the glow animation
+    glowAnimation.value = withRepeat(
+      withTiming(1, {
+        duration: 2000,
+        easing: Easing.inOut(Easing.ease),
+      }),
+      -1,
+      true
+    );
   }, []);
   
   const handleGetStarted = () => {
@@ -66,20 +87,32 @@ export default function SplashScreen() {
           Knowledge is power - use it to transform your health.
         </Text>
         
-        <TouchableOpacity 
-          style={styles.getStartedButton}
-          onPress={handleGetStarted}
-          activeOpacity={0.8}
-        >
-          <LinearGradient
-            colors={['#8B5CF6', '#A855F7']}
-            style={styles.buttonGradient}
+        <View style={styles.buttonContainer}>
+          <Animated.View style={[styles.glowRing, useAnimatedStyle(() => {
+            const opacity = interpolate(glowAnimation.value, [0, 1], [0.3, 0.8]);
+            const scale = interpolate(glowAnimation.value, [0, 1], [1, 1.05]);
+            
+            return {
+              opacity,
+              transform: [{ scale }],
+            };
+          })]} />
+          
+          <TouchableOpacity 
+            style={styles.getStartedButton}
+            onPress={handleGetStarted}
+            activeOpacity={0.8}
           >
-            <Text style={styles.buttonText}>
-              I AM READY TO REDUCE MY SUGAR INTAKE!
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            <LinearGradient
+              colors={['#8B5CF6', '#A855F7']}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>
+                I AM READY TO REDUCE MY SUGAR INTAKE!
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
         
         <Text style={styles.disclaimer}>
           Start your journey to a healthier, sugar-conscious lifestyle today.
@@ -179,9 +212,30 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     paddingHorizontal: 20,
   },
-  getStartedButton: {
+  buttonContainer: {
+    position: 'relative',
     width: '100%',
     marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  glowRing: {
+    position: 'absolute',
+    top: -4,
+    left: -4,
+    right: -4,
+    bottom: -4,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#8B5CF6',
+    shadowColor: '#8B5CF6',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
+    elevation: 12,
+  },
+  getStartedButton: {
+    width: '100%',
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
