@@ -1,6 +1,6 @@
 import React from 'react';
 import { Drawer } from 'expo-router/drawer';
-import { Home, Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-react-native';
+import { Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
@@ -11,7 +11,6 @@ function CustomDrawerContent(props: any) {
   const router = useRouter();
   
   const routes = [
-    { name: 'index', title: 'Today', icon: Home, path: '/(tabs)' },
     { name: 'log', title: 'Log Food', icon: Camera, path: '/(tabs)/log' },
     { name: 'scanner', title: 'Scanner', icon: Scan, path: '/(tabs)/scanner' },
     { name: 'insights', title: 'Insights', icon: BarChart, path: '/(tabs)/insights' },
@@ -77,13 +76,7 @@ export default function DrawerLayout() {
         headerLeft: () => null,
       }}
     >
-      <Drawer.Screen
-        name="index"
-        options={{
-          title: 'Today',
-          drawerLabel: 'Today',
-        }}
-      />
+
       <Drawer.Screen
         name="log"
         options={{
