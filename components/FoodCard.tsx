@@ -59,7 +59,7 @@ export default function FoodCard({ food, onPress, onDelete, showTime = true }: F
           </View>
           
           <View style={styles.details}>
-            <Text style={styles.name}>{food.name}</Text>
+            <Text style={styles.name}>{food.name || 'Unknown Food'}</Text>
             {food.brand && <Text style={styles.brand}>{food.brand}</Text>}
             
             <View style={styles.nutritionRow}>

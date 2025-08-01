@@ -91,13 +91,13 @@ export default function FoodDetailScreen() {
             />
           ) : (
             <View style={[styles.imagePlaceholder, { backgroundColor: Colors.border }]}>
-              <Text style={styles.placeholderText}>{food.name.charAt(0)}</Text>
+              <Text style={styles.placeholderText}>{food.name?.charAt(0) || '?'}</Text>
             </View>
           )}
         </View>
         
         <View style={styles.infoContainer}>
-          <Text style={styles.name}>{food.name}</Text>
+          <Text style={styles.name}>{food.name || 'Unknown Food'}</Text>
           {food.brand && <Text style={styles.brand}>{food.brand}</Text>}
           
           <View style={styles.timeContainer}>
@@ -108,7 +108,7 @@ export default function FoodDetailScreen() {
           <View style={styles.mealTypeContainer}>
             <Text style={styles.mealTypeLabel}>Meal:</Text>
             <Text style={styles.mealTypeValue}>
-              {food.mealType.charAt(0).toUpperCase() + food.mealType.slice(1)}
+              {food.mealType?.charAt(0).toUpperCase() + food.mealType?.slice(1) || 'Unknown'}
             </Text>
           </View>
         </View>
@@ -157,7 +157,7 @@ export default function FoodDetailScreen() {
           </View>
         </View>
         
-        {food.hiddenSugars.length > 0 && (
+        {food.hiddenSugars && food.hiddenSugars.length > 0 && (
           <View style={styles.hiddenSugarsContainer}>
             <View style={styles.hiddenSugarsHeader}>
               <AlertTriangle size={20} color={Colors.warning} />
