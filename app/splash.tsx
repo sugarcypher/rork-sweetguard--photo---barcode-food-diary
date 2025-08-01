@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Platform, Image } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Image, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,6 +7,7 @@ import { sugarEducationLibrary, inspirationalQuotes, SugarFact, InspirationalQuo
 
 export default function SplashScreen() {
   const router = useRouter();
+  const glowAnim = useRef(new Animated.Value(0)).current;
   
   const [currentFact] = useState<SugarFact>(() => {
     const randomIndex = Math.floor(Math.random() * sugarEducationLibrary.length);
@@ -20,16 +21,38 @@ export default function SplashScreen() {
   
   useEffect(() => {
     console.log('SplashScreen mounted');
-  }, []);
+    
+    // Start the glow animation
+    const glowAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: false,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: false,
+        }),
+      ])
+    );
+    
+    glowAnimation.start();
+    
+    return () => {
+      glowAnimation.stop();
+    };
+  }, [glowAnim]);
   
   const handleGetStarted = () => {
     console.log('Navigating to tabs');
     try {
-      router.replace('/(tabs)/log');
+      router.replace('/(tabs)');
     } catch (error) {
       console.error('Navigation error:', error);
       // Fallback navigation
-      router.replace('/(tabs)/log');
+      router.replace('/(tabs)');
     }
   };
   
@@ -73,7 +96,25 @@ export default function SplashScreen() {
         </Text>
         
         <View style={styles.buttonContainer}>
-          <View style={styles.glowRing} />
+          <Animated.View 
+            style={[
+              styles.glowRing,
+              {
+                shadowOpacity: glowAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.3, 1],
+                }),
+                shadowRadius: glowAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [8, 20],
+                }),
+                borderColor: glowAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['rgba(139, 92, 246, 0.5)', 'rgba(139, 92, 246, 1)'],
+                }),
+              }
+            ]} 
+          />
           
           <TouchableOpacity 
             style={styles.getStartedButton}
