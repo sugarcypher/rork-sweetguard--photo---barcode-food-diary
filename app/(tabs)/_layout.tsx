@@ -38,25 +38,25 @@ function CustomDrawerContent(props: any) {
               onPress={() => {
                 switch (route.name) {
                   case 'index':
-                    router.push('/(tabs)/');
+                    router.push('/');
                     break;
                   case 'log':
-                    router.push('/(tabs)/log');
+                    router.push('/log');
                     break;
                   case 'scanner':
-                    router.push('/(tabs)/scanner');
+                    router.push('/scanner');
                     break;
                   case 'insights':
-                    router.push('/(tabs)/insights');
+                    router.push('/insights');
                     break;
                   case 'shopping':
-                    router.push('/(tabs)/shopping');
+                    router.push('/shopping');
                     break;
                   case 'community':
-                    router.push('/(tabs)/community');
+                    router.push('/community');
                     break;
                   case 'settings':
-                    router.push('/(tabs)/settings');
+                    router.push('/settings');
                     break;
                 }
               }}
