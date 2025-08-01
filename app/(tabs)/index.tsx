@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
 import { DesignSystem, PremiumColors } from '@/constants/designSystem';
-import { Camera, BarChart, Receipt, Users, Settings, Scan, Zap, Shield } from 'lucide-react-native';
+import { Camera, BarChart, Receipt, Users, Settings, Scan, Zap } from 'lucide-react-native';
 import { useTourStore } from '@/store/tourStore';
 import OnboardingTour from '@/components/OnboardingTour';
 import EnterpriseCard from '@/components/ui/EnterpriseCard';
@@ -91,34 +91,15 @@ export default function TabsIndex() {
     <>
       <StatusBar barStyle="light-content" backgroundColor={PremiumColors.background.primary} />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Enterprise Hero Header with Logo */}
+        {/* Hero Section - Logo Only */}
         <View style={styles.heroContainer}>
-          <LinearGradient
-            colors={[PremiumColors.brand.primary, PremiumColors.brand.primaryLight, PremiumColors.brand.secondary]}
-            style={styles.heroGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <View style={styles.heroContent}>
-              <View style={styles.logoSection}>
-                <Image
-                  source={{ uri: 'https://r2-pub.rork.com/attachments/hoc92s8e3ut1pf75jyxn7' }}
-                  style={styles.logoImage}
-                  resizeMode="contain"
-                />
-                <View style={styles.logoTextContainer}>
-                  <Text style={styles.logoTitle}>SugarCypher</Text>
-                  <Text style={styles.logoSubtitle}>Decode Hidden Sugars, Live Healthier</Text>
-                </View>
-              </View>
-              <View style={styles.heroStats}>
-                <View style={styles.statBadge}>
-                  <Shield size={14} color={PremiumColors.semantic.success} />
-                  <Text style={styles.statText}>Enterprise</Text>
-                </View>
-              </View>
-            </View>
-          </LinearGradient>
+          <View style={styles.logoHero}>
+            <Image
+              source={{ uri: 'https://r2-pub.rork.com/attachments/hoc92s8e3ut1pf75jyxn7' }}
+              style={styles.heroLogo}
+              resizeMode="contain"
+            />
+          </View>
         </View>
         
         {/* Premium Quick Actions */}
@@ -217,68 +198,20 @@ const styles = StyleSheet.create({
     backgroundColor: PremiumColors.background.primary,
   },
   
-  // Hero Section with Logo
+  // Hero Section - Logo Only
   heroContainer: {
-    borderRadius: DesignSystem.borderRadius.xl,
-    overflow: 'hidden',
-    marginHorizontal: DesignSystem.spacing.lg,
-    marginTop: DesignSystem.spacing.lg,
-    marginBottom: DesignSystem.spacing.lg,
-    ...DesignSystem.shadows.lg,
-  },
-  heroGradient: {
-    padding: DesignSystem.spacing.xl,
-  },
-  heroContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logoSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  logoImage: {
-    width: 64,
-    height: 64,
-    marginRight: DesignSystem.spacing.md,
-  },
-  logoTextContainer: {
-    flex: 1,
-  },
-  logoTitle: {
-    ...DesignSystem.typography.h2,
-    color: 'white',
-    fontWeight: '800',
-    marginBottom: 4,
-    letterSpacing: -0.5,
-  },
-  logoSubtitle: {
-    ...DesignSystem.typography.body2,
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontWeight: '500',
-  },
-  heroStats: {
+    marginTop: DesignSystem.spacing.xl,
+    marginBottom: DesignSystem.spacing.xl,
     alignItems: 'center',
   },
-  statBadge: {
-    flexDirection: 'row',
+  logoHero: {
     alignItems: 'center',
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
-    paddingHorizontal: DesignSystem.spacing.sm,
-    paddingVertical: 4,
-    borderRadius: DesignSystem.borderRadius.full,
-    borderWidth: 1,
-    borderColor: PremiumColors.semantic.success,
+    justifyContent: 'center',
+    paddingVertical: DesignSystem.spacing.xl,
   },
-  statText: {
-    color: PremiumColors.semantic.success,
-    fontSize: 10,
-    fontWeight: '700',
-    marginLeft: 4,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+  heroLogo: {
+    width: 200,
+    height: 120,
   },
   
   // Featured Section
