@@ -49,10 +49,10 @@ export default {
   sugarDark: '#DB2777',
   
   // Gradients
-  gradientPrimary: ['#6366F1', '#8B5CF6'],
-  gradientSecondary: ['#06B6D4', '#3B82F6'],
-  gradientDanger: ['#EF4444', '#F97316'],
-  gradientSuccess: ['#10B981', '#059669'],
+  gradientPrimary: ['#6366F1', '#8B5CF6'] as const,
+  gradientSecondary: ['#06B6D4', '#3B82F6'] as const,
+  gradientDanger: ['#EF4444', '#F97316'] as const,
+  gradientSuccess: ['#10B981', '#059669'] as const,
   
   // Shadows and overlays
   shadow: 'rgba(0, 0, 0, 0.25)',

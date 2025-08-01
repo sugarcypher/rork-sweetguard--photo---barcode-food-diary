@@ -38,7 +38,7 @@ export default function LogFoodScreen() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Hero Section */}
         <LinearGradient
-          colors={['#6366F1', '#8B5CF6']}
+          colors={['#6366F1', '#8B5CF6'] as const}
           style={styles.heroSection}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -54,7 +54,7 @@ export default function LogFoodScreen() {
         <View style={styles.actionsContainer}>
           <View style={styles.actionCard}>
             <LinearGradient
-              colors={[Colors.cardElevated, Colors.surface]}
+              colors={[Colors.cardElevated, Colors.surface] as const}
               style={styles.cardGradient}
             >
               <View style={styles.cardHeader}>
@@ -81,7 +81,7 @@ export default function LogFoodScreen() {
           
           <View style={styles.actionCard}>
             <LinearGradient
-              colors={[Colors.cardElevated, Colors.surface]}
+              colors={[Colors.cardElevated, Colors.surface] as const}
               style={styles.cardGradient}
             >
               <View style={styles.cardHeader}>
@@ -108,7 +108,7 @@ export default function LogFoodScreen() {
           
           <View style={styles.actionCard}>
             <LinearGradient
-              colors={[Colors.cardElevated, Colors.surface]}
+              colors={[Colors.cardElevated, Colors.surface] as const}
               style={styles.cardGradient}
             >
               <View style={styles.cardHeader}>
@@ -138,7 +138,7 @@ export default function LogFoodScreen() {
         <View style={styles.infoSection}>
           <View style={styles.infoCard}>
             <LinearGradient
-              colors={[Colors.warning + '20', Colors.warning + '10']}
+              colors={[Colors.warning + '20', Colors.warning + '10'] as const}
               style={styles.infoGradient}
             >
               <Zap size={20} color={Colors.warning} />

@@ -73,14 +73,14 @@ export default function TabsIndex() {
       icon: Users, 
       route: '/community', 
       description: 'Connect with others',
-      gradient: ['#8B5CF6', '#EC4899']
+      gradient: ['#8B5CF6', '#EC4899'] as const
     },
     { 
       title: 'Settings', 
       icon: Settings, 
       route: '/settings', 
       description: 'App preferences and account',
-      gradient: ['#6B7280', '#374151']
+      gradient: ['#6B7280', '#374151'] as const
     },
   ];
   
@@ -88,7 +88,7 @@ export default function TabsIndex() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Hero Header */}
       <LinearGradient
-        colors={['#6366F1', '#8B5CF6', '#EC4899']}
+        colors={['#6366F1', '#8B5CF6', '#EC4899'] as const}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.heroGradient}
@@ -153,7 +153,7 @@ export default function TabsIndex() {
                 activeOpacity={0.8}
               >
                 <LinearGradient
-                  colors={[Colors.cardElevated, Colors.surface]}
+                  colors={[Colors.cardElevated, Colors.surface] as const}
                   style={styles.menuItemGradient}
                 >
                   <View style={styles.iconContainer}>
