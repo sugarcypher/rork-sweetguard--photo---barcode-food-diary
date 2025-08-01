@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Animated, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Platform, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
-import SugarCubeIcon from '@/components/SugarCubeIcon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getRandomFact, getRandomQuote, SugarFact, InspirationalQuote } from '@/constants/sugarEducation';
 
@@ -66,7 +65,11 @@ export default function SplashScreen() {
         ]}
       >
         <View style={styles.iconContainer}>
-          <SugarCubeIcon size={80} color={Colors.primary} />
+          <Image 
+            source={{ uri: 'https://r2-pub.rork.com/attachments/zbqmpigoa27m6qt9ms38n' }}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
         
         <Text style={styles.appName}>SugarCypher</Text>
@@ -141,6 +144,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+  logo: {
+    width: 120,
+    height: 120,
   },
   appName: {
     fontSize: 36,
