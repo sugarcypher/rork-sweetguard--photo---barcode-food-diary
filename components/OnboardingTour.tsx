@@ -59,30 +59,6 @@ const tourSteps: TourStep[] = [
     position: 'center'
   },
   {
-    id: 'sugar_cube',
-    title: 'Sugar Cube Menu 🧊',
-    description: 'Tap this sugar cube icon to access the main menu with quick actions, food logging, and insights.',
-    targetArea: { x: 16, y: 50, width: 44, height: 44 },
-    icon: <Brain size={24} color={Colors.primary} />,
-    position: 'bottom'
-  },
-  {
-    id: 'add_food',
-    title: 'Quick Add Food ➕',
-    description: 'Fast access to log new foods. Tap here to jump straight to the food scanner.',
-    targetArea: { x: screenWidth - 60, y: 50, width: 44, height: 44 },
-    icon: <Plus size={24} color={Colors.primary} />,
-    position: 'bottom'
-  },
-  {
-    id: 'reflection',
-    title: 'Daily Reflection 💭',
-    description: 'Share how you\'re feeling about your sugar intake and track your wellness journey.',
-    targetArea: { x: screenWidth - 104, y: 50, width: 44, height: 44 },
-    icon: <MessageCircle size={24} color={Colors.primary} />,
-    position: 'bottom'
-  },
-  {
     id: 'progress_bar',
     title: 'Sugar Progress Tracker 📊',
     description: 'This shows your daily sugar intake vs. the recommended limit. Watch it change as you log foods!',
@@ -91,26 +67,34 @@ const tourSteps: TourStep[] = [
     position: 'bottom'
   },
   {
-    id: 'tab_today',
-    title: 'Today Tab 🏠',
+    id: 'tab_home',
+    title: 'Home Tab 🏠',
     description: 'Your home base! See today\'s food log, sugar progress, and get personalized insights.',
-    targetArea: { x: 0, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
+    targetArea: { x: 0, y: screenHeight - 80, width: screenWidth / 7, height: 80 },
     icon: <Home size={24} color={Colors.primary} />,
     position: 'top'
   },
   {
-    id: 'tab_scanner',
-    title: 'Log Food Tab 📷',
-    description: 'Your SugarCypher scanner! Take photos of food, scan barcodes, or add foods manually.',
-    targetArea: { x: screenWidth / 6, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
+    id: 'tab_log',
+    title: 'Log Food Tab 📝',
+    description: 'Manually log your foods and meals with detailed nutritional information.',
+    targetArea: { x: screenWidth / 7, y: screenHeight - 80, width: screenWidth / 7, height: 80 },
     icon: <Camera size={24} color={Colors.primary} />,
+    position: 'top'
+  },
+  {
+    id: 'tab_scanner',
+    title: 'Scanner Tab 📷',
+    description: 'Your SugarCypher scanner! Take photos of food, scan barcodes, or use AI to identify foods.',
+    targetArea: { x: (screenWidth / 7) * 2, y: screenHeight - 80, width: screenWidth / 7, height: 80 },
+    icon: <ScanLine size={24} color={Colors.primary} />,
     position: 'top'
   },
   {
     id: 'tab_insights',
     title: 'Insights Tab 📈',
     description: 'Discover patterns in your sugar consumption and get personalized health insights.',
-    targetArea: { x: (screenWidth / 6) * 2, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
+    targetArea: { x: (screenWidth / 7) * 3, y: screenHeight - 80, width: screenWidth / 7, height: 80 },
     icon: <BarChart size={24} color={Colors.primary} />,
     position: 'top'
   },
@@ -118,15 +102,15 @@ const tourSteps: TourStep[] = [
     id: 'tab_shopping',
     title: 'Smart Shopping Tab 🛒',
     description: 'Scan receipts to get a sugar score for your shopping trips and track your progress.',
-    targetArea: { x: (screenWidth / 6) * 3, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
-    icon: <ScanLine size={24} color={Colors.primary} />,
+    targetArea: { x: (screenWidth / 7) * 4, y: screenHeight - 80, width: screenWidth / 7, height: 80 },
+    icon: <BookOpen size={24} color={Colors.primary} />,
     position: 'top'
   },
   {
     id: 'tab_community',
     title: 'Community Tab 👥',
     description: 'Connect with others, share your progress, join challenges, and set goals together.',
-    targetArea: { x: (screenWidth / 6) * 4, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
+    targetArea: { x: (screenWidth / 7) * 5, y: screenHeight - 80, width: screenWidth / 7, height: 80 },
     icon: <MessageCircle size={24} color={Colors.primary} />,
     position: 'top'
   },
@@ -134,16 +118,8 @@ const tourSteps: TourStep[] = [
     id: 'tab_settings',
     title: 'Settings Tab ⚙️',
     description: 'Customize your experience, manage your data, and adjust app preferences.',
-    targetArea: { x: (screenWidth / 6) * 5, y: screenHeight - 80, width: screenWidth / 6, height: 80 },
+    targetArea: { x: (screenWidth / 7) * 6, y: screenHeight - 80, width: screenWidth / 7, height: 80 },
     icon: <Settings size={24} color={Colors.primary} />,
-    position: 'top'
-  },
-  {
-    id: 'gamification',
-    title: 'Gamification Features 🏆',
-    description: 'Earn points, unlock badges, compete in challenges, and climb the leaderboards!',
-    targetArea: { x: 20, y: screenHeight * 0.4, width: screenWidth - 40, height: 200 },
-    icon: <ScanLine size={24} color={Colors.primary} />,
     position: 'top'
   },
   {
