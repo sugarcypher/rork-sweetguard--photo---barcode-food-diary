@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-react-native';
+import { Home, Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 
 export default function TabLayout() {
@@ -26,6 +26,15 @@ export default function TabLayout() {
         headerTintColor: Colors.text,
       }}
     >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Home size={size} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="log"
         options={{
