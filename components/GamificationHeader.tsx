@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Trophy, Star, Zap } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Trophy, Star, Zap, Crown } from 'lucide-react-native';
 import { useGamification } from '@/store/gamificationStore';
 import colors from '@/constants/colors';
 import { LEVEL_THRESHOLDS } from '@/constants/gamification';
@@ -18,52 +19,75 @@ export default function GamificationHeader({ onPress }: GamificationHeaderProps)
     (userStats.totalPoints - currentLevelPoints) / (nextLevelPoints - currentLevelPoints) : 1;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
-      <View style={styles.leftSection}>
-        <View style={styles.levelBadge}>
-          <Star size={16} color={colors.warning} fill={colors.warning} />
-          <Text style={styles.levelText}>{userStats.level}</Text>
-        </View>
-        
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
+      <LinearGradient
+        colors={[colors.cardElevated, colors.surface]}
+        style={styles.gradient}
+      >
+        <View style={styles.leftSection}>
+          <LinearGradient
+            colors={[colors.warning, colors.warningLight]}
+            style={styles.levelBadge}
+          >
+            <Crown size={18} color="white" />
+            <Text style={styles.levelText}>{userStats.level}</Text>
+          </LinearGradient>
+          
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <LinearGradient
+                colors={[colors.accent, colors.accentLight]}
+                style={[styles.progressFill, { width: `${progress * 100}%` }]}
+              />
+            </View>
+            <Text style={styles.progressText}>
+              {userStats.totalPoints} XP {pointsToNext > 0 && `• ${pointsToNext} to next level`}
+            </Text>
           </View>
-          <Text style={styles.progressText}>
-            {userStats.totalPoints} XP {pointsToNext > 0 && `• ${pointsToNext} to next level`}
-          </Text>
         </View>
-      </View>
 
-      <View style={styles.rightSection}>
-        <View style={styles.statItem}>
-          <Zap size={16} color={colors.warning} />
-          <Text style={styles.statText}>{userStats.streak}</Text>
+        <View style={styles.rightSection}>
+          <View style={styles.statItem}>
+            <LinearGradient
+              colors={[colors.warning + '20', colors.warning + '10']}
+              style={styles.statBadge}
+            >
+              <Zap size={14} color={colors.warning} />
+              <Text style={styles.statText}>{userStats.streak}</Text>
+            </LinearGradient>
+          </View>
+          
+          <View style={styles.statItem}>
+            <LinearGradient
+              colors={[colors.accent + '20', colors.accent + '10']}
+              style={styles.statBadge}
+            >
+              <Trophy size={14} color={colors.accent} />
+              <Text style={styles.statText}>{userStats.badges.length}</Text>
+            </LinearGradient>
+          </View>
         </View>
-        
-        <View style={styles.statItem}>
-          <Trophy size={16} color={colors.accent} />
-          <Text style={styles.statText}>{userStats.badges.length}</Text>
-        </View>
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    padding: 12,
-    borderRadius: 12,
+    borderRadius: 20,
     marginHorizontal: 16,
     marginVertical: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  gradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 20,
   },
   leftSection: {
     flex: 1,
@@ -73,50 +97,54 @@ const styles = StyleSheet.create({
   levelBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.warning + '20',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginRight: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    marginRight: 16,
   },
   levelText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.warning,
+    fontSize: 16,
+    fontWeight: '800',
+    color: 'white',
     marginLeft: 4,
   },
   progressContainer: {
     flex: 1,
   },
   progressBar: {
-    height: 6,
+    height: 8,
     backgroundColor: colors.border,
-    borderRadius: 3,
+    borderRadius: 4,
     overflow: 'hidden',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: colors.accent,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   progressText: {
     fontSize: 12,
-    color: colors.subtext,
-    fontWeight: '500',
+    color: colors.textSecondary,
+    fontWeight: '600',
   },
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
   },
   statItem: {
+    alignItems: 'center',
+  },
+  statBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
   statText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.text,
     marginLeft: 4,
   },
