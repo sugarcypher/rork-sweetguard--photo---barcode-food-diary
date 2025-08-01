@@ -102,7 +102,7 @@ export default function TabsIndex() {
             <View style={styles.heroContent}>
               <View style={styles.logoSection}>
                 <Image
-                  source={{ uri: 'https://r2-pub.rork.com/generated-images/263194d2-3064-4390-9fa0-74ddaee7584b.png' }}
+                  source={{ uri: 'https://r2-pub.rork.com/attachments/hoc92s8e3ut1pf75jyxn7' }}
                   style={styles.logoImage}
                   resizeMode="contain"
                 />
