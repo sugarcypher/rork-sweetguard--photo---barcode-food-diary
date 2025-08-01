@@ -14,6 +14,7 @@ const queryClient = new QueryClient();
 function RootLayoutNav() {
   return (
     <Stack screenOptions={{ headerBackTitle: "Back" }}>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="initialization" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding/welcome" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding/meet-sniffa" options={{ headerShown: false }} />
