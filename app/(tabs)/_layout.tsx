@@ -5,7 +5,7 @@ import Colors from '@/constants/colors';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 import { router } from 'expo-router';
-import { ShoogSniffaAvatar } from '@/components/ShoogSniffaAvatar';
+import ShoogSniffaAvatar from '@/components/ShoogSniffaAvatar';
 
 function CustomDrawerContent(props: any) {
   const routes = [
@@ -35,7 +35,31 @@ function CustomDrawerContent(props: any) {
             <TouchableOpacity
               key={route.name}
               style={[styles.drawerItem, isActive && styles.drawerItemActive]}
-              onPress={() => router.push(`/(tabs)/${route.name}`)}
+              onPress={() => {
+                switch (route.name) {
+                  case 'index':
+                    router.push('/(tabs)/');
+                    break;
+                  case 'log':
+                    router.push('/(tabs)/log');
+                    break;
+                  case 'scanner':
+                    router.push('/(tabs)/scanner');
+                    break;
+                  case 'insights':
+                    router.push('/(tabs)/insights');
+                    break;
+                  case 'shopping':
+                    router.push('/(tabs)/shopping');
+                    break;
+                  case 'community':
+                    router.push('/(tabs)/community');
+                    break;
+                  case 'settings':
+                    router.push('/(tabs)/settings');
+                    break;
+                }
+              }}
             >
               <IconComponent 
                 size={24} 
