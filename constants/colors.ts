@@ -1,4 +1,11 @@
 export default {
+  light: {
+    text: '#FFFFFF',
+    background: '#1A1A1A',
+    tint: '#4A90E2',
+    tabIconDefault: '#B0B0B0',
+    tabIconSelected: '#4A90E2',
+  },
   primary: '#4A90E2', // Pastel blue
   secondary: '#5AC8FA', // Light blue
   accent: '#50E3C2', // Mint green

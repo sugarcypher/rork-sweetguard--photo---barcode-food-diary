@@ -21,7 +21,7 @@ export default function InitializationScreen() {
     // Step progression with simpler logic
     let step = 0;
     const totalSteps = INITIALIZATION_STEPS.length;
-    let stepInterval: NodeJS.Timeout;
+    let stepInterval: ReturnType<typeof setInterval>;
     
     const startProgression = () => {
       stepInterval = setInterval(() => {

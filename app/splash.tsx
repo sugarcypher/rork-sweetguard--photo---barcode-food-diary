@@ -59,7 +59,7 @@ export default function SplashScreen() {
         console.error('Fallback navigation also failed:', fallbackError);
         // Last resort: try navigating to the index of tabs
         try {
-          router.push('/(tabs)/index');
+          router.push('/(tabs)');
         } catch (lastError) {
           console.error('All navigation attempts failed:', lastError);
         }
