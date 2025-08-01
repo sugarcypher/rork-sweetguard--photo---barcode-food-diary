@@ -20,22 +20,21 @@ export default function InitializationScreen() {
     console.log('InitializationScreen mounted');
     
     // Step progression with simpler logic
+    let step = 0;
+    const totalSteps = INITIALIZATION_STEPS.length;
+    
     const stepInterval = setInterval(() => {
-      setCurrentStep(prev => {
-        if (prev < INITIALIZATION_STEPS.length - 1) {
-          return prev + 1;
-        } else {
-          clearInterval(stepInterval);
-          setTimeout(() => {
-            setIsComplete(true);
-            setTimeout(() => {
-              console.log('Navigating to splash screen');
-              router.replace('/splash');
-            }, 500);
-          }, 800);
-          return prev;
-        }
-      });
+      step++;
+      if (step < totalSteps) {
+        setCurrentStep(step);
+      } else {
+        clearInterval(stepInterval);
+        setIsComplete(true);
+        setTimeout(() => {
+          console.log('Navigating to splash screen');
+          router.replace('/splash');
+        }, 1300); // Combined delay for completion and navigation
+      }
     }, 800);
     
     return () => {
