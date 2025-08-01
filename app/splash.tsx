@@ -25,11 +25,11 @@ export default function SplashScreen() {
   const handleGetStarted = () => {
     console.log('Navigating to tabs');
     try {
-      router.replace('/(tabs)');
+      router.replace('/(tabs)/log');
     } catch (error) {
       console.error('Navigation error:', error);
       // Fallback navigation
-      router.replace('/(tabs)');
+      router.replace('/(tabs)/log');
     }
   };
   
