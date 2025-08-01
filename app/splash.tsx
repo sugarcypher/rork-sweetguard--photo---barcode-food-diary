@@ -49,8 +49,8 @@ export default function SplashScreen() {
       router.replace('/(tabs)/log');
     } catch (error) {
       console.error('Navigation error:', error);
-      // Fallback navigation
-      router.replace('/(tabs)');
+      // Fallback navigation to log tab
+      router.replace('/(tabs)/log');
     }
   };
   
