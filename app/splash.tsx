@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sugarEducationLibrary, inspirationalQuotes, SugarFact, InspirationalQuote } from '@/constants/sugarEducation';
+import { initializeWithSampleData } from '@/store/foodLogStore';
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -45,8 +46,17 @@ export default function SplashScreen() {
     };
   }, [glowAnim]);
   
-  const handleGetStarted = () => {
-    console.log('Get Started button pressed, navigating to tabs');
+  const handleGetStarted = async () => {
+    console.log('Get Started button pressed, initializing data and navigating to tabs');
+    
+    try {
+      // Initialize food log store with sample data
+      await initializeWithSampleData();
+      console.log('Sample data initialized successfully');
+    } catch (error) {
+      console.error('Error initializing sample data:', error);
+    }
+    
     try {
       console.log('Attempting router.replace to /(tabs)');
       router.replace('/(tabs)' as any);
