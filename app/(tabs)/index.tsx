@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import { Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-react-native';
+import { useTourStore } from '@/store/tourStore';
+import OnboardingTour from '@/components/OnboardingTour';
 
 export default function TabsIndex() {
   const router = useRouter();
+  const { showTour, initializeTour, completeTour } = useTourStore();
+  
+  useEffect(() => {
+    // Initialize tour when component mounts
+    initializeTour();
+  }, [initializeTour]);
+  
+  const handleTourComplete = () => {
+    console.log('Tour completed from home screen');
+    completeTour();
+  };
+  
+  const handleTourSkip = () => {
+    console.log('Tour skipped from home screen');
+    completeTour();
+  };
   
   const menuItems = [
     { title: 'Food Log', icon: Camera, route: '/log', description: 'Track your daily food intake' },
@@ -42,6 +60,12 @@ export default function TabsIndex() {
           );
         })}
       </View>
+      
+      <OnboardingTour
+        visible={showTour}
+        onComplete={handleTourComplete}
+        onSkip={handleTourSkip}
+      />
     </View>
   );
 }
