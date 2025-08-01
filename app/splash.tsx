@@ -45,7 +45,7 @@ export default function SplashScreen() {
   
   const handleGetStarted = () => {
     console.log('Navigating to tabs');
-    router.push('/(tabs)');
+    router.push('/(tabs)/log');
   };
   
   return (
