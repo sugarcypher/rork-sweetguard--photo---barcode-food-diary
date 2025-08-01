@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
-import { Camera, BarChart, Receipt, Users, Settings, Scan, Sparkles, TrendingUp } from 'lucide-react-native';
+import { DesignSystem, PremiumColors } from '@/constants/designSystem';
+import { Camera, BarChart, Receipt, Users, Settings, Scan, Sparkles, TrendingUp, Zap, Shield } from 'lucide-react-native';
 import { useTourStore } from '@/store/tourStore';
 import OnboardingTour from '@/components/OnboardingTour';
+import EnterpriseCard from '@/components/ui/EnterpriseCard';
+import EnterpriseButton from '@/components/ui/EnterpriseButton';
+import EnterpriseHeader from '@/components/ui/EnterpriseHeader';
 
 const { width } = Dimensions.get('window');
 
@@ -85,246 +89,231 @@ export default function TabsIndex() {
   ];
   
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Hero Header */}
-      <LinearGradient
-        colors={['#6366F1', '#8B5CF6', '#EC4899'] as const}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.heroGradient}
-      >
-        <View style={styles.heroContent}>
-          <View style={styles.heroIcon}>
-            <Sparkles size={32} color="white" />
-          </View>
-          <Text style={styles.heroTitle}>SugarCypher</Text>
-          <Text style={styles.heroSubtitle}>Decode Hidden Sugars, Live Healthier</Text>
-          <View style={styles.heroStats}>
-            <View style={styles.statItem}>
-              <TrendingUp size={16} color="rgba(255,255,255,0.8)" />
-              <Text style={styles.statText}>Track Progress</Text>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor={PremiumColors.background.primary} />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        {/* Enterprise Hero Header */}
+        <EnterpriseHeader
+          title="SugarCypher"
+          subtitle="Decode Hidden Sugars, Live Healthier"
+          icon={<Sparkles size={28} color="white" />}
+          variant="gradient"
+          rightAction={
+            <View style={styles.heroStats}>
+              <View style={styles.statBadge}>
+                <Shield size={14} color={PremiumColors.semantic.success} />
+                <Text style={styles.statText}>Enterprise</Text>
+              </View>
             </View>
+          }
+        />
+        
+        {/* Premium Quick Actions */}
+        <View style={styles.featuredSection}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.featuredGrid}>
+            {menuItems.filter(item => item.featured).map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <EnterpriseCard
+                  key={index}
+                  variant="gradient"
+                  gradientColors={item.gradient as readonly [string, string, ...string[]]}
+                  shadow="lg"
+                  style={styles.featuredCard}
+                >
+                  <TouchableOpacity
+                    onPress={() => router.push(item.route as any)}
+                    activeOpacity={0.8}
+                    style={styles.featuredContent}
+                  >
+                    <View style={styles.featuredIconContainer}>
+                      <View style={styles.featuredIcon}>
+                        <IconComponent size={32} color="white" />
+                      </View>
+                      <View style={styles.featuredBadge}>
+                        <Zap size={12} color={PremiumColors.semantic.warning} />
+                      </View>
+                    </View>
+                    <Text style={styles.featuredTitle}>{item.title}</Text>
+                    <Text style={styles.featuredDescription}>{item.description}</Text>
+                    <EnterpriseButton
+                      title="Launch"
+                      onPress={() => router.push(item.route as any)}
+                      variant="ghost"
+                      size="sm"
+                      style={styles.launchButton}
+                    />
+                  </TouchableOpacity>
+                </EnterpriseCard>
+              );
+            })}
           </View>
         </View>
-      </LinearGradient>
-      
-      {/* Featured Actions */}
-      <View style={styles.featuredSection}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.featuredGrid}>
-          {menuItems.filter(item => item.featured).map((item, index) => {
-            const IconComponent = item.icon;
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.featuredItem}
-                onPress={() => router.push(item.route as any)}
-                activeOpacity={0.8}
-              >
-                <LinearGradient
-                  colors={item.gradient}
-                  style={styles.featuredGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
+        
+        {/* Enterprise Feature Grid */}
+        <View style={styles.allFeaturesSection}>
+          <Text style={styles.sectionTitle}>All Features</Text>
+          <View style={styles.menuGrid}>
+            {menuItems.filter(item => !item.featured).map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <EnterpriseCard
+                  key={index}
+                  variant="elevated"
+                  shadow="md"
+                  style={styles.menuCard}
                 >
-                  <View style={styles.featuredIcon}>
-                    <IconComponent size={28} color="white" />
-                  </View>
-                  <Text style={styles.featuredTitle}>{item.title}</Text>
-                  <Text style={styles.featuredDescription}>{item.description}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            );
-          })}
+                  <TouchableOpacity
+                    onPress={() => router.push(item.route as any)}
+                    activeOpacity={0.8}
+                    style={styles.menuContent}
+                  >
+                    <View style={styles.menuIconContainer}>
+                      <LinearGradient
+                        colors={item.gradient as readonly [string, string, ...string[]]}
+                        style={styles.menuIconGradient}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                      >
+                        <IconComponent size={24} color="white" />
+                      </LinearGradient>
+                    </View>
+                    <Text style={styles.menuTitle}>{item.title}</Text>
+                    <Text style={styles.menuDescription}>{item.description}</Text>
+                  </TouchableOpacity>
+                </EnterpriseCard>
+              );
+            })}
+          </View>
         </View>
-      </View>
-      
-      {/* All Features */}
-      <View style={styles.allFeaturesSection}>
-        <Text style={styles.sectionTitle}>All Features</Text>
-        <View style={styles.menuGrid}>
-          {menuItems.filter(item => !item.featured).map((item, index) => {
-            const IconComponent = item.icon;
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.menuItem}
-                onPress={() => router.push(item.route as any)}
-                activeOpacity={0.8}
-              >
-                <LinearGradient
-                  colors={[Colors.cardElevated, Colors.surface] as const}
-                  style={styles.menuItemGradient}
-                >
-                  <View style={styles.iconContainer}>
-                    <LinearGradient
-                      colors={item.gradient}
-                      style={styles.iconGradient}
-                    >
-                      <IconComponent size={24} color="white" />
-                    </LinearGradient>
-                  </View>
-                  <Text style={styles.menuTitle}>{item.title}</Text>
-                  <Text style={styles.menuDescription}>{item.description}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-      
-      <OnboardingTour
-        visible={showTour}
-        onComplete={handleTourComplete}
-        onSkip={handleTourSkip}
-      />
-    </ScrollView>
+        
+        <OnboardingTour
+          visible={showTour}
+          onComplete={handleTourComplete}
+          onSkip={handleTourSkip}
+        />
+      </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: PremiumColors.background.primary,
   },
   
-  // Hero Section
-  heroGradient: {
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
-  },
-  heroContent: {
+  // Hero Stats
+  heroStats: {
     alignItems: 'center',
   },
-  heroIcon: {
+  statBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    paddingHorizontal: DesignSystem.spacing.sm,
+    paddingVertical: 4,
+    borderRadius: DesignSystem.borderRadius.full,
+    borderWidth: 1,
+    borderColor: PremiumColors.semantic.success,
+  },
+  statText: {
+    color: PremiumColors.semantic.success,
+    fontSize: 10,
+    fontWeight: '700',
+    marginLeft: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  
+  // Featured Section
+  featuredSection: {
+    padding: DesignSystem.spacing.lg,
+    paddingTop: DesignSystem.spacing.xl,
+  },
+  sectionTitle: {
+    ...DesignSystem.typography.h2,
+    color: PremiumColors.text.primary,
+    marginBottom: DesignSystem.spacing.lg,
+  },
+  featuredGrid: {
+    flexDirection: 'row',
+    gap: DesignSystem.spacing.md,
+  },
+  featuredCard: {
+    flex: 1,
+  },
+  featuredContent: {
+    alignItems: 'center',
+    minHeight: 200,
+    justifyContent: 'space-between',
+  },
+  featuredIconContainer: {
+    position: 'relative',
+    marginBottom: DesignSystem.spacing.md,
+  },
+  featuredIcon: {
     width: 64,
     height: 64,
     borderRadius: 32,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
-  heroTitle: {
-    fontSize: 32,
-    fontWeight: '900',
-    color: 'white',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  heroSubtitle: {
-    fontSize: 18,
-    color: 'rgba(255,255,255,0.9)',
-    textAlign: 'center',
-    marginBottom: 24,
-    fontWeight: '500',
-  },
-  heroStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  statText: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 6,
-  },
-  
-  // Featured Section
-  featuredSection: {
-    padding: 24,
-    paddingTop: 32,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: Colors.text,
-    marginBottom: 20,
-  },
-  featuredGrid: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  featuredItem: {
-    flex: 1,
-    borderRadius: 20,
-    overflow: 'hidden',
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  featuredGradient: {
-    padding: 24,
-    alignItems: 'center',
-    minHeight: 160,
-    justifyContent: 'center',
-  },
-  featuredIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+  featuredBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: PremiumColors.background.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: PremiumColors.semantic.warning,
   },
   featuredTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    ...DesignSystem.typography.h4,
     color: 'white',
-    marginBottom: 8,
+    marginBottom: DesignSystem.spacing.xs,
     textAlign: 'center',
   },
   featuredDescription: {
-    fontSize: 13,
+    ...DesignSystem.typography.body2,
     color: 'rgba(255,255,255,0.8)',
     textAlign: 'center',
-    lineHeight: 18,
+    marginBottom: DesignSystem.spacing.md,
+  },
+  launchButton: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   
   // All Features Section
   allFeaturesSection: {
-    padding: 24,
-    paddingTop: 8,
+    padding: DesignSystem.spacing.lg,
+    paddingTop: DesignSystem.spacing.sm,
   },
   menuGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
+    gap: DesignSystem.spacing.md,
   },
-  menuItem: {
-    width: (width - 64) / 2,
-    borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+  menuCard: {
+    width: (width - (DesignSystem.spacing.lg * 2) - DesignSystem.spacing.md) / 2,
   },
-  menuItemGradient: {
-    padding: 20,
+  menuContent: {
     alignItems: 'center',
     minHeight: 140,
     justifyContent: 'center',
   },
-  iconContainer: {
-    marginBottom: 12,
+  menuIconContainer: {
+    marginBottom: DesignSystem.spacing.md,
   },
-  iconGradient: {
+  menuIconGradient: {
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -332,15 +321,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   menuTitle: {
-    fontSize: 16,
+    ...DesignSystem.typography.body1,
     fontWeight: '700',
-    color: Colors.text,
-    marginBottom: 6,
+    color: PremiumColors.text.primary,
+    marginBottom: DesignSystem.spacing.xs,
     textAlign: 'center',
   },
   menuDescription: {
-    fontSize: 12,
-    color: Colors.subtext,
+    ...DesignSystem.typography.caption,
+    color: PremiumColors.text.tertiary,
     textAlign: 'center',
     lineHeight: 16,
   },

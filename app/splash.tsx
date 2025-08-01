@@ -49,7 +49,7 @@ export default function SplashScreen() {
     console.log('Get Started button pressed, navigating to tabs');
     try {
       console.log('Attempting router.replace to /(tabs)');
-      router.replace('/(tabs)');
+      router.replace('/(tabs)' as any);
     } catch (error) {
       console.error('Navigation error with replace:', error);
       try {

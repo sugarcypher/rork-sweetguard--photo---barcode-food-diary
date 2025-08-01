@@ -82,7 +82,7 @@ export default function PremiumButton({
       activeOpacity={0.8}
     >
       <LinearGradient
-        colors={disabled ? [Colors.border, Colors.surface] as const : getGradientColors()}
+        colors={disabled ? [Colors.border, Colors.surface] as readonly [string, string] : getGradientColors()}
         style={[
           styles.gradient,
           {

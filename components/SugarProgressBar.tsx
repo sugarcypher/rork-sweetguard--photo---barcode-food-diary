@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Animated, LayoutChangeEvent } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
-import { DAILY_SUGAR_LIMIT_GRAMS } from '@/constants/sugarLimits';
-import { getSugarSeverity } from '@/constants/sugarLimits';
+import { DesignSystem, PremiumColors } from '@/constants/designSystem';
+import { DAILY_SUGAR_LIMIT_GRAMS, getSugarSeverity } from '@/constants/sugarLimits';
 
 interface SugarProgressBarProps {
   currentSugar: number;
@@ -21,6 +21,14 @@ export default function SugarProgressBar({
   const progress = Math.min(currentSugar / limit, 1);
   const severity = getSugarSeverity(currentSugar);
   const [containerWidth, setContainerWidth] = useState<number>(0);
+  
+  // Enhanced progress calculation with smooth transitions
+  const getProgressColor = () => {
+    if (progress > 0.9) return [PremiumColors.semantic.error, PremiumColors.semantic.errorLight] as const;
+    if (progress > 0.7) return [PremiumColors.semantic.warning, PremiumColors.semantic.warningLight] as const;
+    if (progress > 0.5) return [PremiumColors.brand.secondary, PremiumColors.brand.secondaryLight] as const;
+    return [PremiumColors.semantic.success, PremiumColors.semantic.successLight] as const;
+  };
   
   const progressAnim = React.useRef(new Animated.Value(0)).current;
   
@@ -55,30 +63,44 @@ export default function SugarProgressBar({
       )}
       
       <View 
-        style={[styles.progressBackground, { height: height + 4 }]}
+        style={[styles.progressBackground, { height: height + 8 }]}
         onLayout={handleLayout}
       >
+        {/* Background glow effect */}
+        <View style={[styles.progressGlow, { height: height + 8 }]} />
+        
         <Animated.View 
           style={[
             styles.progressFill, 
             { 
-              height: height + 4,
+              height: height + 8,
               transform: [{ scaleX: animatedScale }]
             }
           ]} 
         >
           <LinearGradient
-            colors={progress > 0.8 ? 
-              [Colors.danger, Colors.dangerLight] : 
-              progress > 0.6 ? 
-              [Colors.warning, Colors.warningLight] : 
-              [Colors.success, Colors.successLight]
-            }
+            colors={getProgressColor()}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.progressGradient}
           />
+          
+          {/* Progress shine effect */}
+          <View style={styles.progressShine} />
         </Animated.View>
+        
+        {/* Progress markers */}
+        <View style={styles.progressMarkers}>
+          {[0.25, 0.5, 0.75].map((marker, index) => (
+            <View 
+              key={index}
+              style={[
+                styles.progressMarker,
+                { left: `${marker * 100}%` }
+              ]} 
+            />
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -92,38 +114,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: DesignSystem.spacing.sm,
   },
   label: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: Colors.text,
+    ...DesignSystem.typography.h4,
+    color: PremiumColors.text.primary,
   },
   limitLabel: {
-    fontSize: 14,
-    color: Colors.subtext,
-    fontWeight: '500',
+    ...DesignSystem.typography.body2,
+    color: PremiumColors.text.tertiary,
   },
   severityLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...DesignSystem.typography.overline,
+    letterSpacing: 1,
   },
   progressBackground: {
     width: '100%',
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
+    backgroundColor: PremiumColors.background.surface,
+    borderRadius: DesignSystem.borderRadius.lg,
     overflow: 'hidden',
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: PremiumColors.border.tertiary,
+    ...DesignSystem.shadows.md,
+  },
+  progressGlow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    borderRadius: DesignSystem.borderRadius.lg,
   },
   progressFill: {
     width: '100%',
-    borderRadius: 12,
+    borderRadius: DesignSystem.borderRadius.lg,
     transformOrigin: 'left',
     position: 'absolute',
     left: 0,
@@ -132,6 +157,31 @@ const styles = StyleSheet.create({
   },
   progressGradient: {
     flex: 1,
-    borderRadius: 12,
-  }
+    borderRadius: DesignSystem.borderRadius.lg,
+  },
+  progressShine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '50%',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopLeftRadius: DesignSystem.borderRadius.lg,
+    borderTopRightRadius: DesignSystem.borderRadius.lg,
+  },
+  progressMarkers: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row',
+  },
+  progressMarker: {
+    position: 'absolute',
+    width: 2,
+    height: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    marginLeft: -1,
+  },
 });
