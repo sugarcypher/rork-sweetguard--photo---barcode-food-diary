@@ -32,7 +32,7 @@ export default function InitializationScreen() {
         setIsComplete(true);
         setTimeout(() => {
           console.log('Navigating to splash screen');
-          router.replace('/splash');
+          router.push('/splash');
         }, 1300); // Combined delay for completion and navigation
       }
     }, 800);
