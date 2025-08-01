@@ -6,7 +6,9 @@ import Colors from '@/constants/colors';
 import { DesignSystem, PremiumColors } from '@/constants/designSystem';
 import { Camera, BarChart, Receipt, Users, Settings, Scan, Zap } from 'lucide-react-native';
 import { useTourStore } from '@/store/tourStore';
+import { useFoodLogStore } from '@/store/foodLogStore';
 import OnboardingTour from '@/components/OnboardingTour';
+import SugarProgressBar from '@/components/SugarProgressBar';
 import EnterpriseCard from '@/components/ui/EnterpriseCard';
 import EnterpriseButton from '@/components/ui/EnterpriseButton';
 
@@ -15,6 +17,7 @@ const { width } = Dimensions.get('window');
 export default function TabsIndex() {
   const router = useRouter();
   const { showTour, initializeTour, completeTour } = useTourStore();
+  const { todaysTotalSugar, isLoading } = useFoodLogStore();
   
   useEffect(() => {
     console.log('TabsIndex component mounted, initializing tour...');
@@ -100,6 +103,18 @@ export default function TabsIndex() {
               resizeMode="contain"
             />
           </View>
+        </View>
+        
+        {/* Sugar Progress Section */}
+        <View style={styles.progressSection}>
+          <Text style={styles.progressTitle}>Today's Sugar Intake</Text>
+          {!isLoading && (
+            <SugarProgressBar 
+              currentSugar={todaysTotalSugar}
+              showLabel={true}
+              height={16}
+            />
+          )}
         </View>
         
         {/* Premium Quick Actions */}
@@ -210,8 +225,21 @@ const styles = StyleSheet.create({
     paddingVertical: DesignSystem.spacing.xl,
   },
   heroLogo: {
-    width: 200,
-    height: 120,
+    width: 320,
+    height: 180,
+  },
+  
+  // Progress Section
+  progressSection: {
+    padding: DesignSystem.spacing.lg,
+    paddingTop: 0,
+    paddingBottom: DesignSystem.spacing.xl,
+  },
+  progressTitle: {
+    ...DesignSystem.typography.h3,
+    color: PremiumColors.text.primary,
+    marginBottom: DesignSystem.spacing.md,
+    textAlign: 'center',
   },
   
   // Featured Section
