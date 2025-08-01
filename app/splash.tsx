@@ -52,7 +52,7 @@ export default function SplashScreen() {
     } catch (error) {
       console.error('Navigation error:', error);
       // Fallback navigation
-      router.replace('/(tabs)');
+      router.push('/(tabs)');
     }
   };
   

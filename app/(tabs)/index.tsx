@@ -1,11 +1,47 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
+import { Camera, BarChart, Receipt, Users, Settings, Scan } from 'lucide-react-native';
 
 export default function TabsIndex() {
+  const router = useRouter();
+  
+  const menuItems = [
+    { title: 'Food Log', icon: Camera, route: '/log', description: 'Track your daily food intake' },
+    { title: 'Scanner', icon: Scan, route: '/scanner', description: 'Scan food items and barcodes' },
+    { title: 'Insights', icon: BarChart, route: '/insights', description: 'View your sugar consumption analytics' },
+    { title: 'Shopping', icon: Receipt, route: '/shopping', description: 'Smart shopping assistance' },
+    { title: 'Community', icon: Users, route: '/community', description: 'Connect with others' },
+    { title: 'Settings', icon: Settings, route: '/settings', description: 'App preferences and account' },
+  ];
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to SugarCypher</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>SugarCypher</Text>
+        <Text style={styles.subtitle}>Your Sugar Tracking Dashboard</Text>
+      </View>
+      
+      <View style={styles.menuGrid}>
+        {menuItems.map((item, index) => {
+          const IconComponent = item.icon;
+          return (
+            <TouchableOpacity
+              key={index}
+              style={styles.menuItem}
+              onPress={() => router.push(item.route as any)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.iconContainer}>
+                <IconComponent size={32} color={Colors.primary} />
+              </View>
+              <Text style={styles.menuTitle}>{item.title}</Text>
+              <Text style={styles.menuDescription}>{item.description}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -13,13 +49,61 @@ export default function TabsIndex() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: Colors.background,
+    padding: 20,
   },
-  text: {
-    fontSize: 18,
+  header: {
+    alignItems: 'center',
+    marginBottom: 30,
+    paddingTop: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '900',
     color: Colors.text,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: Colors.subtext,
+    textAlign: 'center',
+  },
+  menuGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
+  menuItem: {
+    width: '47%',
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: `${Colors.primary}20`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  menuTitle: {
+    fontSize: 16,
     fontWeight: '600',
+    color: Colors.text,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  menuDescription: {
+    fontSize: 12,
+    color: Colors.subtext,
+    textAlign: 'center',
+    lineHeight: 16,
   },
 });
