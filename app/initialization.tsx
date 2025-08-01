@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Platform, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import Colors from '@/constants/colors';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const INITIALIZATION_STEPS = [
   'Initializing...',
@@ -44,10 +42,7 @@ export default function InitializationScreen() {
   }, [router]);
   
   return (
-    <LinearGradient
-      colors={['#0F172A', '#1E293B', '#334155']}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.content}>
         {/* Logo Container */}
         <View style={styles.logoContainer}>
@@ -96,7 +91,7 @@ export default function InitializationScreen() {
           ))}
         </View>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -105,6 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#0F172A',
   },
   content: {
     alignItems: 'center',

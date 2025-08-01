@@ -4,14 +4,6 @@ import { useRouter } from 'expo-router';
 import Colors from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { sugarEducationLibrary, inspirationalQuotes, SugarFact, InspirationalQuote } from '@/constants/sugarEducation';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withRepeat, 
-  withTiming, 
-  interpolate,
-  Easing
-} from 'react-native-reanimated';
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -26,31 +18,18 @@ export default function SplashScreen() {
     return inspirationalQuotes[randomIndex];
   });
   
-  // Animation for the glowing highlight
-  const glowAnimation = useSharedValue(0);
-  
   useEffect(() => {
     console.log('SplashScreen mounted');
-    
-    // Start the glow animation
-    glowAnimation.value = withRepeat(
-      withTiming(1, {
-        duration: 2000,
-        easing: Easing.inOut(Easing.ease),
-      }),
-      -1,
-      true
-    );
   }, []);
   
   const handleGetStarted = () => {
     console.log('Navigating to tabs');
     try {
-      router.replace('/(tabs)/log');
+      router.replace('/(tabs)');
     } catch (error) {
       console.error('Navigation error:', error);
-      // Fallback navigation to log tab
-      router.replace('/(tabs)/log');
+      // Fallback navigation
+      router.replace('/(tabs)');
     }
   };
   
@@ -94,15 +73,7 @@ export default function SplashScreen() {
         </Text>
         
         <View style={styles.buttonContainer}>
-          <Animated.View style={[styles.glowRing, useAnimatedStyle(() => {
-            const opacity = interpolate(glowAnimation.value, [0, 1], [0.3, 0.8]);
-            const scale = interpolate(glowAnimation.value, [0, 1], [1, 1.05]);
-            
-            return {
-              opacity,
-              transform: [{ scale }],
-            };
-          })]} />
+          <View style={styles.glowRing} />
           
           <TouchableOpacity 
             style={styles.getStartedButton}
