@@ -1,6 +1,8 @@
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
+import { ShoppingStoreProvider } from '@/store/shoppingStore';
+import { GamificationProvider } from '@/store/gamificationStore';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -50,5 +52,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <ShoppingStoreProvider>
+      <GamificationProvider>
+        <RootLayoutNav />
+      </GamificationProvider>
+    </ShoppingStoreProvider>
+  );
 }
