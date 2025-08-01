@@ -13,6 +13,7 @@ export default function InitializationScreen() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isComplete, setIsComplete] = useState<boolean>(false);
+  const [hasNavigated, setHasNavigated] = useState<boolean>(false);
   
   useEffect(() => {
     console.log('InitializationScreen mounted');
@@ -20,24 +21,61 @@ export default function InitializationScreen() {
     // Step progression with simpler logic
     let step = 0;
     const totalSteps = INITIALIZATION_STEPS.length;
+    let stepInterval: NodeJS.Timeout;
     
-    const stepInterval = setInterval(() => {
-      step++;
-      if (step < totalSteps) {
-        setCurrentStep(step);
-      } else {
-        clearInterval(stepInterval);
-        setIsComplete(true);
-        setTimeout(() => {
-          console.log('Navigating to splash screen');
+    const startProgression = () => {
+      stepInterval = setInterval(() => {
+        step++;
+        console.log(`Initialization step: ${step}/${totalSteps}`);
+        
+        if (step < totalSteps) {
+          setCurrentStep(step);
+        } else {
+          clearInterval(stepInterval);
+          setIsComplete(true);
+          
+          // Navigate after a short delay
+          setTimeout(() => {
+            if (!hasNavigated) {
+              console.log('Navigating to splash screen');
+              setHasNavigated(true);
+              try {
+                router.replace('/splash');
+              } catch (error) {
+                console.error('Navigation error:', error);
+                // Fallback navigation
+                router.push('/splash');
+              }
+            }
+          }, 1000);
+        }
+      }, 600); // Slightly faster progression
+    };
+    
+    // Start progression after a small delay to ensure component is mounted
+    const initTimeout = setTimeout(startProgression, 100);
+    
+    // Safety timeout - if initialization takes too long, force navigation
+    const safetyTimeout = setTimeout(() => {
+      if (!hasNavigated) {
+        console.log('Safety timeout triggered - forcing navigation to splash');
+        setHasNavigated(true);
+        try {
+          router.replace('/splash');
+        } catch (error) {
+          console.error('Safety navigation error:', error);
           router.push('/splash');
-        }, 1300); // Combined delay for completion and navigation
+        }
       }
-    }, 800);
+    }, 8000); // 8 second safety timeout
     
     return () => {
       console.log('InitializationScreen cleanup');
-      clearInterval(stepInterval);
+      clearTimeout(initTimeout);
+      clearTimeout(safetyTimeout);
+      if (stepInterval) {
+        clearInterval(stepInterval);
+      }
     };
   }, [router]);
   

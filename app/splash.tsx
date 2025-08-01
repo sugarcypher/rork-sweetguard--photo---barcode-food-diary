@@ -46,13 +46,24 @@ export default function SplashScreen() {
   }, [glowAnim]);
   
   const handleGetStarted = () => {
-    console.log('Navigating to tabs');
+    console.log('Get Started button pressed, navigating to tabs');
     try {
+      console.log('Attempting router.replace to /(tabs)');
       router.replace('/(tabs)');
     } catch (error) {
-      console.error('Navigation error:', error);
-      // Fallback navigation
-      router.push('/(tabs)');
+      console.error('Navigation error with replace:', error);
+      try {
+        console.log('Fallback: attempting router.push to /(tabs)');
+        router.push('/(tabs)');
+      } catch (fallbackError) {
+        console.error('Fallback navigation also failed:', fallbackError);
+        // Last resort: try navigating to the index of tabs
+        try {
+          router.push('/(tabs)/index');
+        } catch (lastError) {
+          console.error('All navigation attempts failed:', lastError);
+        }
+      }
     }
   };
   

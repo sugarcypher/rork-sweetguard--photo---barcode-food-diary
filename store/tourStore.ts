@@ -34,19 +34,23 @@ export const useTourStore = create<TourState>((set, get) => ({
 
   initializeTour: async () => {
     try {
+      console.log('Initializing tour...');
       const tourCompleted = await AsyncStorage.getItem(TOUR_STORAGE_KEY);
       const hasCompleted = tourCompleted === 'true';
+      
+      console.log('Tour status from storage:', { tourCompleted, hasCompleted });
       
       set({ 
         hasCompletedTour: hasCompleted,
         showTour: !hasCompleted // Show tour if not completed
       });
       
-      console.log('Tour initialization:', { hasCompleted, showTour: !hasCompleted });
+      console.log('Tour initialization complete:', { hasCompleted, showTour: !hasCompleted });
     } catch (error) {
       console.error('Error initializing tour:', error);
       // Default to showing tour if there's an error
       set({ hasCompletedTour: false, showTour: true });
+      console.log('Tour initialization fallback: showing tour due to error');
     }
   },
 

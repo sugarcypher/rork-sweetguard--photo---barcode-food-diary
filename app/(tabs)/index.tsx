@@ -12,7 +12,17 @@ export default function TabsIndex() {
   
   useEffect(() => {
     // Initialize tour when component mounts
-    initializeTour();
+    console.log('TabsIndex component mounted, initializing tour...');
+    const initTour = async () => {
+      try {
+        await initializeTour();
+        console.log('Tour initialization completed in TabsIndex');
+      } catch (error) {
+        console.error('Error initializing tour in TabsIndex:', error);
+      }
+    };
+    
+    initTour();
   }, [initializeTour]);
   
   const handleTourComplete = () => {
