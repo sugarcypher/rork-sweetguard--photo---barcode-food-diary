@@ -228,28 +228,31 @@ export default function LogFoodScreen() {
                 title="Photo Scan"
                 onPress={handleTakePhoto}
                 variant="primary"
-                size="sm"
-                icon={<Camera size={16} color="#FFFFFF" />}
+                size="md"
+                icon={<Camera size={18} color="#FFFFFF" />}
                 iconPosition="left"
                 style={styles.quickActionButton}
+                textStyle={styles.quickActionText}
               />
               <EnterpriseButton
                 title="Barcode"
                 onPress={handleScanBarcode}
                 variant="secondary"
-                size="sm"
-                icon={<QrCode size={16} color="#FFFFFF" />}
+                size="md"
+                icon={<QrCode size={18} color="#FFFFFF" />}
                 iconPosition="left"
                 style={styles.quickActionButton}
+                textStyle={styles.quickActionText}
               />
               <EnterpriseButton
                 title="Manual"
                 onPress={handleManualEntry}
                 variant="success"
-                size="sm"
-                icon={<Plus size={16} color="#FFFFFF" />}
+                size="md"
+                icon={<Plus size={18} color="#FFFFFF" />}
                 iconPosition="left"
                 style={styles.quickActionButton}
+                textStyle={styles.quickActionText}
               />
             </View>
           </View>
@@ -350,6 +353,12 @@ const styles = StyleSheet.create({
   },
   quickActionButton: {
     flex: 1,
+    minHeight: 48,
+  },
+  quickActionText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 14,
   },
   
   // Bottom Spacing
