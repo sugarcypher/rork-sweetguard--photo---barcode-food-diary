@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, StatusBar, RefreshControl } from 'react-native';
+import React, { useState, useMemo, useCallback } from 'react';
+import { StyleSheet, Text, View, ScrollView, StatusBar, RefreshControl, Dimensions, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { DesignSystem, PremiumColors } from '@/constants/designSystem';
-import { Camera, QrCode, Plus, Calendar, TrendingUp } from 'lucide-react-native';
+import { Camera, QrCode, Plus, Calendar, Target, Award, Flame, Clock, BarChart3, Zap, AlertCircle } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import EnterpriseCard from '@/components/ui/EnterpriseCard';
-import EnterpriseButton from '@/components/ui/EnterpriseButton';
-import EnterpriseHeader from '@/components/ui/EnterpriseHeader';
 import { useFoodLogStore } from '@/store/foodLogStore';
 import FoodCard from '@/components/FoodCard';
 import MealSection from '@/components/MealSection';
@@ -13,6 +12,9 @@ import DateSelector from '@/components/DateSelector';
 import SugarProgressBar from '@/components/SugarProgressBar';
 import EmptyState from '@/components/EmptyState';
 import { Food, MealType } from '@/types/food';
+import { DAILY_SUGAR_LIMIT_GRAMS } from '@/constants/sugarLimits';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export default function LogFoodScreen() {
   const router = useRouter();
@@ -65,11 +67,35 @@ export default function LogFoodScreen() {
     setTimeout(() => setRefreshing(false), 1000);
   };
   
-  const getMealFoods = (mealType: MealType) => {
+  const getMealFoods = useCallback((mealType: MealType) => {
     return foods.filter(food => food.mealType === mealType);
-  };
+  }, [foods]);
   
   const sugarProgress = getSugarProgress();
+  
+  // Enhanced analytics
+  const analytics = useMemo(() => {
+    const mealBreakdown = {
+      breakfast: getMealFoods('breakfast').reduce((sum, food) => sum + food.sugarPerServing, 0),
+      lunch: getMealFoods('lunch').reduce((sum, food) => sum + food.sugarPerServing, 0),
+      dinner: getMealFoods('dinner').reduce((sum, food) => sum + food.sugarPerServing, 0),
+      snack: getMealFoods('snack').reduce((sum, food) => sum + food.sugarPerServing, 0),
+    };
+    
+    const highestMeal = Object.entries(mealBreakdown).reduce((a, b) => a[1] > b[1] ? a : b, ['none', 0]);
+    const totalCalories = foods.reduce((sum, food) => sum + (food.calories || 0), 0);
+    const avgSugarPerFood = foods.length > 0 ? totalSugar / foods.length : 0;
+    
+    return {
+      mealBreakdown,
+      highestMeal,
+      totalCalories,
+      avgSugarPerFood,
+      progressPercentage: Math.round(sugarProgress * 100),
+      remainingSugar: Math.max(0, DAILY_SUGAR_LIMIT_GRAMS - totalSugar),
+      isOverLimit: totalSugar > DAILY_SUGAR_LIMIT_GRAMS
+    };
+  }, [foods, totalSugar, sugarProgress, getMealFoods]);
   
   return (
     <>
@@ -84,6 +110,14 @@ export default function LogFoodScreen() {
           color: PremiumColors.text.primary,
         },
         headerTintColor: PremiumColors.text.primary,
+        headerRight: () => (
+          <TouchableOpacity 
+            style={styles.headerButton}
+            onPress={() => router.push('/insights')}
+          >
+            <BarChart3 size={24} color={PremiumColors.brand.primary} />
+          </TouchableOpacity>
+        ),
       }} />
       
       <ScrollView 
@@ -108,33 +142,106 @@ export default function LogFoodScreen() {
           </EnterpriseCard>
         </View>
         
-        {/* Sugar Progress */}
+        {/* Enhanced Analytics Dashboard */}
         {foods.length > 0 && (
-          <View style={styles.progressSection}>
-            <EnterpriseCard variant="elevated" shadow="md">
-              <View style={styles.progressHeader}>
-                <View style={styles.progressTitleContainer}>
-                  <TrendingUp size={20} color={PremiumColors.brand.primary} />
-                  <Text style={styles.progressTitle}>Daily Sugar Intake</Text>
+          <View style={styles.analyticsSection}>
+            {/* Main Progress Card */}
+            <EnterpriseCard variant="elevated" shadow="lg">
+              <LinearGradient
+                colors={analytics.isOverLimit ? 
+                  [PremiumColors.semantic.error + '20', PremiumColors.semantic.errorDark + '10'] :
+                  [PremiumColors.brand.primary + '20', PremiumColors.brand.primaryDark + '10']
+                }
+                style={styles.progressGradient}
+              >
+                <View style={styles.progressHeader}>
+                  <View style={styles.progressTitleContainer}>
+                    <Target size={24} color={analytics.isOverLimit ? PremiumColors.semantic.error : PremiumColors.brand.primary} />
+                    <View>
+                      <Text style={styles.progressTitle}>Daily Sugar Intake</Text>
+                      <Text style={styles.progressSubtitle}>
+                        {analytics.isOverLimit ? 'Over limit' : `${analytics.remainingSugar.toFixed(1)}g remaining`}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.progressValueContainer}>
+                    <Text style={[styles.progressValue, { color: analytics.isOverLimit ? PremiumColors.semantic.error : PremiumColors.brand.primary }]}>
+                      {totalSugar.toFixed(1)}g
+                    </Text>
+                    <Text style={styles.progressLimit}>/ {DAILY_SUGAR_LIMIT_GRAMS}g</Text>
+                  </View>
                 </View>
-                <Text style={styles.progressValue}>{totalSugar.toFixed(1)}g</Text>
-              </View>
-              <SugarProgressBar 
-                currentSugar={totalSugar} 
-                showLabel={false}
-                height={16}
-              />
-              <View style={styles.progressStats}>
-                <View style={styles.progressStat}>
-                  <Text style={styles.progressStatLabel}>Foods Logged</Text>
-                  <Text style={styles.progressStatValue}>{foods.length}</Text>
+                
+                <View style={styles.progressBarContainer}>
+                  <SugarProgressBar 
+                    currentSugar={totalSugar} 
+                    showLabel={false}
+                    height={20}
+                  />
+                  <Text style={styles.progressPercentage}>{analytics.progressPercentage}%</Text>
                 </View>
-                <View style={styles.progressStat}>
-                  <Text style={styles.progressStatLabel}>Progress</Text>
-                  <Text style={styles.progressStatValue}>{Math.round(sugarProgress * 100)}%</Text>
+                
+                {/* Quick Stats Grid */}
+                <View style={styles.quickStatsGrid}>
+                  <View style={styles.quickStat}>
+                    <View style={styles.quickStatIcon}>
+                      <Flame size={16} color={PremiumColors.semantic.warning} />
+                    </View>
+                    <Text style={styles.quickStatValue}>{analytics.totalCalories}</Text>
+                    <Text style={styles.quickStatLabel}>Calories</Text>
+                  </View>
+                  <View style={styles.quickStat}>
+                    <View style={styles.quickStatIcon}>
+                      <Award size={16} color={PremiumColors.semantic.success} />
+                    </View>
+                    <Text style={styles.quickStatValue}>{foods.length}</Text>
+                    <Text style={styles.quickStatLabel}>Foods</Text>
+                  </View>
+                  <View style={styles.quickStat}>
+                    <View style={styles.quickStatIcon}>
+                      <Zap size={16} color={PremiumColors.brand.secondary} />
+                    </View>
+                    <Text style={styles.quickStatValue}>{analytics.avgSugarPerFood.toFixed(1)}g</Text>
+                    <Text style={styles.quickStatLabel}>Avg Sugar</Text>
+                  </View>
+                  <View style={styles.quickStat}>
+                    <View style={styles.quickStatIcon}>
+                      <Clock size={16} color={PremiumColors.text.tertiary} />
+                    </View>
+                    <Text style={styles.quickStatValue}>{analytics.highestMeal[0]}</Text>
+                    <Text style={styles.quickStatLabel}>Highest</Text>
+                  </View>
                 </View>
-              </View>
+              </LinearGradient>
             </EnterpriseCard>
+            
+            {/* Meal Breakdown Cards */}
+            <View style={styles.mealBreakdownContainer}>
+              {Object.entries(analytics.mealBreakdown).map(([meal, sugar]) => {
+                if (sugar === 0) return null;
+                const percentage = totalSugar > 0 ? (sugar / totalSugar) * 100 : 0;
+                return (
+                  <EnterpriseCard key={meal} variant="surface" shadow="sm" style={styles.mealBreakdownCard}>
+                    <View style={styles.mealBreakdownHeader}>
+                      <Text style={styles.mealBreakdownTitle}>{meal.charAt(0).toUpperCase() + meal.slice(1)}</Text>
+                      <Text style={styles.mealBreakdownValue}>{sugar.toFixed(1)}g</Text>
+                    </View>
+                    <View style={styles.mealBreakdownBar}>
+                      <View 
+                        style={[
+                          styles.mealBreakdownFill, 
+                          { 
+                            width: `${percentage}%`,
+                            backgroundColor: meal === analytics.highestMeal[0] ? PremiumColors.semantic.warning : PremiumColors.brand.primary
+                          }
+                        ]} 
+                      />
+                    </View>
+                    <Text style={styles.mealBreakdownPercentage}>{percentage.toFixed(0)}% of daily</Text>
+                  </EnterpriseCard>
+                );
+              })}
+            </View>
           </View>
         )}
         
@@ -213,52 +320,85 @@ export default function LogFoodScreen() {
           </View>
         )}
         
-        {/* Quick Actions - Only show for today */}
+        {/* Enhanced Quick Actions - Only show for today */}
         {isToday && (
           <View style={styles.quickActionsSection}>
-            <EnterpriseCard variant="elevated" shadow="lg">
-              <View style={styles.quickAddContainer}>
+            <EnterpriseCard variant="elevated" shadow="xl">
+              <LinearGradient
+                colors={[PremiumColors.background.elevated, PremiumColors.background.surface]}
+                style={styles.quickAddGradient}
+              >
                 <View style={styles.quickAddHeader}>
                   <View style={styles.quickAddTitleContainer}>
-                    <Plus size={20} color={PremiumColors.brand.primary} />
-                    <Text style={styles.quickAddTitle}>Quick Add</Text>
+                    <View style={styles.quickAddIconContainer}>
+                      <Plus size={24} color={PremiumColors.brand.primary} />
+                    </View>
+                    <View>
+                      <Text style={styles.quickAddTitle}>Add Food</Text>
+                      <Text style={styles.quickAddSubtitle}>Choose your preferred logging method</Text>
+                    </View>
                   </View>
-                  <Text style={styles.quickAddSubtitle}>Choose your preferred method to log food</Text>
+                  {analytics.isOverLimit && (
+                    <View style={styles.warningBadge}>
+                      <AlertCircle size={16} color={PremiumColors.semantic.error} />
+                      <Text style={styles.warningText}>Over Limit</Text>
+                    </View>
+                  )}
                 </View>
                 
-                <View style={styles.quickActions}>
-                  <EnterpriseButton
-                    title="Photo Scan"
+                <View style={styles.quickActionsGrid}>
+                  <TouchableOpacity 
+                    style={[styles.quickActionCard, styles.primaryAction]}
                     onPress={handleTakePhoto}
-                    variant="primary"
-                    size="lg"
-                    icon={<Camera size={24} color="#FFFFFF" />}
-                    iconPosition="left"
-                    style={styles.quickActionButton}
-                    textStyle={styles.quickActionText}
-                  />
-                  <EnterpriseButton
-                    title="Barcode"
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={[PremiumColors.brand.primary, PremiumColors.brand.primaryDark]}
+                      style={styles.quickActionGradient}
+                    >
+                      <View style={styles.quickActionIcon}>
+                        <Camera size={28} color="#FFFFFF" />
+                      </View>
+                      <Text style={styles.quickActionTitle}>Photo Scan</Text>
+                      <Text style={styles.quickActionDescription}>AI-powered food recognition</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity 
+                    style={[styles.quickActionCard, styles.secondaryAction]}
                     onPress={handleScanBarcode}
-                    variant="secondary"
-                    size="lg"
-                    icon={<QrCode size={24} color="#FFFFFF" />}
-                    iconPosition="left"
-                    style={styles.quickActionButton}
-                    textStyle={styles.quickActionText}
-                  />
-                  <EnterpriseButton
-                    title="Manual"
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={[PremiumColors.brand.secondary, PremiumColors.brand.secondaryLight]}
+                      style={styles.quickActionGradient}
+                    >
+                      <View style={styles.quickActionIcon}>
+                        <QrCode size={28} color="#FFFFFF" />
+                      </View>
+                      <Text style={styles.quickActionTitle}>Barcode</Text>
+                      <Text style={styles.quickActionDescription}>Scan product labels</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity 
+                    style={[styles.quickActionCard, styles.tertiaryAction]}
                     onPress={handleManualEntry}
-                    variant="success"
-                    size="lg"
-                    icon={<Plus size={24} color="#FFFFFF" />}
-                    iconPosition="left"
-                    style={styles.quickActionButton}
-                    textStyle={styles.quickActionText}
-                  />
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={[PremiumColors.semantic.success, PremiumColors.semantic.successDark]}
+                      style={styles.quickActionGradient}
+                    >
+                      <View style={styles.quickActionIcon}>
+                        <Plus size={28} color="#FFFFFF" />
+                      </View>
+                      <Text style={styles.quickActionTitle}>Manual</Text>
+                      <Text style={styles.quickActionDescription}>Enter food details</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
                 </View>
-              </View>
+              </LinearGradient>
             </EnterpriseCard>
           </View>
         )}
@@ -276,6 +416,12 @@ const styles = StyleSheet.create({
     backgroundColor: PremiumColors.background.primary,
   },
   
+  // Header
+  headerButton: {
+    padding: DesignSystem.spacing.sm,
+    marginRight: DesignSystem.spacing.sm,
+  },
+  
   // Date Section
   dateSection: {
     paddingHorizontal: DesignSystem.spacing.lg,
@@ -283,48 +429,135 @@ const styles = StyleSheet.create({
     paddingBottom: DesignSystem.spacing.sm,
   },
   
-  // Progress Section
-  progressSection: {
+  // Enhanced Analytics Section
+  analyticsSection: {
     paddingHorizontal: DesignSystem.spacing.lg,
     paddingBottom: DesignSystem.spacing.lg,
+  },
+  progressGradient: {
+    padding: DesignSystem.spacing.lg,
+    borderRadius: DesignSystem.borderRadius.lg,
   },
   progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: DesignSystem.spacing.md,
+    alignItems: 'flex-start',
+    marginBottom: DesignSystem.spacing.lg,
   },
   progressTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: DesignSystem.spacing.sm,
+    gap: DesignSystem.spacing.md,
+    flex: 1,
   },
   progressTitle: {
-    ...DesignSystem.typography.h4,
-    color: PremiumColors.text.primary,
-  },
-  progressValue: {
     ...DesignSystem.typography.h3,
-    color: PremiumColors.brand.primary,
+    color: PremiumColors.text.primary,
     fontWeight: '700',
   },
-  progressStats: {
+  progressSubtitle: {
+    ...DesignSystem.typography.body2,
+    color: PremiumColors.text.tertiary,
+    marginTop: 2,
+  },
+  progressValueContainer: {
+    alignItems: 'flex-end',
+  },
+  progressValue: {
+    ...DesignSystem.typography.display,
+    fontWeight: '900',
+    fontSize: 32,
+    lineHeight: 36,
+  },
+  progressLimit: {
+    ...DesignSystem.typography.body2,
+    color: PremiumColors.text.tertiary,
+    marginTop: -4,
+  },
+  progressBarContainer: {
+    marginBottom: DesignSystem.spacing.lg,
+    position: 'relative',
+  },
+  progressPercentage: {
+    ...DesignSystem.typography.caption,
+    color: PremiumColors.text.secondary,
+    textAlign: 'right',
+    marginTop: DesignSystem.spacing.xs,
+    fontWeight: '600',
+  },
+  
+  // Quick Stats Grid
+  quickStatsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: DesignSystem.spacing.md,
+    gap: DesignSystem.spacing.sm,
   },
-  progressStat: {
+  quickStat: {
+    flex: 1,
     alignItems: 'center',
+    padding: DesignSystem.spacing.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: DesignSystem.borderRadius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  progressStatLabel: {
-    ...DesignSystem.typography.caption,
-    color: PremiumColors.text.tertiary,
-    marginBottom: 2,
+  quickStatIcon: {
+    marginBottom: DesignSystem.spacing.xs,
   },
-  progressStatValue: {
+  quickStatValue: {
     ...DesignSystem.typography.h4,
     color: PremiumColors.text.primary,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  quickStatLabel: {
+    ...DesignSystem.typography.caption,
+    color: PremiumColors.text.tertiary,
+    textAlign: 'center',
+  },
+  
+  // Meal Breakdown
+  mealBreakdownContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: DesignSystem.spacing.sm,
+    marginTop: DesignSystem.spacing.md,
+  },
+  mealBreakdownCard: {
+    flex: 1,
+    minWidth: (screenWidth - DesignSystem.spacing.lg * 2 - DesignSystem.spacing.sm) / 2,
+    padding: DesignSystem.spacing.md,
+  },
+  mealBreakdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: DesignSystem.spacing.xs,
+  },
+  mealBreakdownTitle: {
+    ...DesignSystem.typography.body2,
+    color: PremiumColors.text.secondary,
     fontWeight: '600',
+  },
+  mealBreakdownValue: {
+    ...DesignSystem.typography.h4,
+    color: PremiumColors.text.primary,
+    fontWeight: '700',
+  },
+  mealBreakdownBar: {
+    height: 4,
+    backgroundColor: PremiumColors.background.surface,
+    borderRadius: 2,
+    marginVertical: DesignSystem.spacing.xs,
+    overflow: 'hidden',
+  },
+  mealBreakdownFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  mealBreakdownPercentage: {
+    ...DesignSystem.typography.caption,
+    color: PremiumColors.text.tertiary,
   },
   
   // Log Content
@@ -347,44 +580,106 @@ const styles = StyleSheet.create({
     paddingVertical: DesignSystem.spacing.xl * 2,
   },
   
-  // Quick Actions
+  // Enhanced Quick Actions
   quickActionsSection: {
     paddingTop: DesignSystem.spacing.xl,
     paddingHorizontal: DesignSystem.spacing.lg,
   },
-  quickAddContainer: {
+  quickAddGradient: {
     padding: DesignSystem.spacing.lg,
+    borderRadius: DesignSystem.borderRadius.lg,
   },
   quickAddHeader: {
-    marginBottom: DesignSystem.spacing.lg,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: DesignSystem.spacing.xl,
   },
   quickAddTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: DesignSystem.spacing.sm,
-    marginBottom: DesignSystem.spacing.xs,
+    gap: DesignSystem.spacing.md,
+    flex: 1,
+  },
+  quickAddIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: PremiumColors.brand.primary + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: PremiumColors.brand.primary + '40',
   },
   quickAddTitle: {
     ...DesignSystem.typography.h3,
     color: PremiumColors.text.primary,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   quickAddSubtitle: {
-    ...DesignSystem.typography.body1,
+    ...DesignSystem.typography.body2,
     color: PremiumColors.text.secondary,
+    marginTop: 2,
   },
-  quickActions: {
+  warningBadge: {
     flexDirection: 'row',
-    gap: DesignSystem.spacing.sm,
+    alignItems: 'center',
+    gap: DesignSystem.spacing.xs,
+    backgroundColor: PremiumColors.semantic.error + '20',
+    paddingHorizontal: DesignSystem.spacing.sm,
+    paddingVertical: DesignSystem.spacing.xs,
+    borderRadius: DesignSystem.borderRadius.sm,
+    borderWidth: 1,
+    borderColor: PremiumColors.semantic.error + '40',
   },
-  quickActionButton: {
-    flex: 1,
-    minHeight: 64,
-  },
-  quickActionText: {
-    color: '#FFFFFF',
+  warningText: {
+    ...DesignSystem.typography.caption,
+    color: PremiumColors.semantic.error,
     fontWeight: '600',
-    fontSize: 16,
+  },
+  quickActionsGrid: {
+    gap: DesignSystem.spacing.md,
+  },
+  quickActionCard: {
+    borderRadius: DesignSystem.borderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: DesignSystem.spacing.sm,
+    ...DesignSystem.shadows.md,
+  },
+  quickActionGradient: {
+    padding: DesignSystem.spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: DesignSystem.spacing.md,
+  },
+  quickActionIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quickActionTitle: {
+    ...DesignSystem.typography.h4,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    flex: 1,
+  },
+  quickActionDescription: {
+    ...DesignSystem.typography.body2,
+    color: 'rgba(255, 255, 255, 0.8)',
+    marginTop: 2,
+    flex: 1,
+  },
+  primaryAction: {
+    // Primary action styles handled by gradient
+  },
+  secondaryAction: {
+    // Secondary action styles handled by gradient
+  },
+  tertiaryAction: {
+    // Tertiary action styles handled by gradient
   },
   
   // Bottom Spacing
