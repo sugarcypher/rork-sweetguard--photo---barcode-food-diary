@@ -216,45 +216,50 @@ export default function LogFoodScreen() {
         {/* Quick Actions - Only show for today */}
         {isToday && (
           <View style={styles.quickActionsSection}>
-            <EnterpriseHeader
-              title="Quick Add"
-              subtitle="Choose your preferred method to log food"
-              icon={<Plus size={24} color="#FFFFFF" />}
-              variant="gradient"
-            />
-            
-            <View style={styles.quickActions}>
-              <EnterpriseButton
-                title="Photo Scan"
-                onPress={handleTakePhoto}
-                variant="primary"
-                size="md"
-                icon={<Camera size={18} color="#FFFFFF" />}
-                iconPosition="left"
-                style={styles.quickActionButton}
-                textStyle={styles.quickActionText}
-              />
-              <EnterpriseButton
-                title="Barcode"
-                onPress={handleScanBarcode}
-                variant="secondary"
-                size="md"
-                icon={<QrCode size={18} color="#FFFFFF" />}
-                iconPosition="left"
-                style={styles.quickActionButton}
-                textStyle={styles.quickActionText}
-              />
-              <EnterpriseButton
-                title="Manual"
-                onPress={handleManualEntry}
-                variant="success"
-                size="md"
-                icon={<Plus size={18} color="#FFFFFF" />}
-                iconPosition="left"
-                style={styles.quickActionButton}
-                textStyle={styles.quickActionText}
-              />
-            </View>
+            <EnterpriseCard variant="elevated" shadow="lg">
+              <View style={styles.quickAddContainer}>
+                <View style={styles.quickAddHeader}>
+                  <View style={styles.quickAddTitleContainer}>
+                    <Plus size={20} color={PremiumColors.brand.primary} />
+                    <Text style={styles.quickAddTitle}>Quick Add</Text>
+                  </View>
+                  <Text style={styles.quickAddSubtitle}>Choose your preferred method to log food</Text>
+                </View>
+                
+                <View style={styles.quickActions}>
+                  <EnterpriseButton
+                    title="Photo Scan"
+                    onPress={handleTakePhoto}
+                    variant="primary"
+                    size="md"
+                    icon={<Camera size={18} color="#FFFFFF" />}
+                    iconPosition="left"
+                    style={styles.quickActionButton}
+                    textStyle={styles.quickActionText}
+                  />
+                  <EnterpriseButton
+                    title="Barcode"
+                    onPress={handleScanBarcode}
+                    variant="secondary"
+                    size="md"
+                    icon={<QrCode size={18} color="#FFFFFF" />}
+                    iconPosition="left"
+                    style={styles.quickActionButton}
+                    textStyle={styles.quickActionText}
+                  />
+                  <EnterpriseButton
+                    title="Manual"
+                    onPress={handleManualEntry}
+                    variant="success"
+                    size="md"
+                    icon={<Plus size={18} color="#FFFFFF" />}
+                    iconPosition="left"
+                    style={styles.quickActionButton}
+                    textStyle={styles.quickActionText}
+                  />
+                </View>
+              </View>
+            </EnterpriseCard>
           </View>
         )}
         
@@ -345,10 +350,31 @@ const styles = StyleSheet.create({
   // Quick Actions
   quickActionsSection: {
     paddingTop: DesignSystem.spacing.xl,
+    paddingHorizontal: DesignSystem.spacing.lg,
+  },
+  quickAddContainer: {
+    padding: DesignSystem.spacing.lg,
+  },
+  quickAddHeader: {
+    marginBottom: DesignSystem.spacing.lg,
+  },
+  quickAddTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: DesignSystem.spacing.sm,
+    marginBottom: DesignSystem.spacing.xs,
+  },
+  quickAddTitle: {
+    ...DesignSystem.typography.h3,
+    color: PremiumColors.text.primary,
+    fontWeight: '600',
+  },
+  quickAddSubtitle: {
+    ...DesignSystem.typography.body,
+    color: PremiumColors.text.secondary,
   },
   quickActions: {
     flexDirection: 'row',
-    paddingHorizontal: DesignSystem.spacing.lg,
     gap: DesignSystem.spacing.sm,
   },
   quickActionButton: {
