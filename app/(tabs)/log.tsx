@@ -231,8 +231,8 @@ export default function LogFoodScreen() {
                     title="Photo Scan"
                     onPress={handleTakePhoto}
                     variant="primary"
-                    size="md"
-                    icon={<Camera size={18} color="#FFFFFF" />}
+                    size="lg"
+                    icon={<Camera size={24} color="#FFFFFF" />}
                     iconPosition="left"
                     style={styles.quickActionButton}
                     textStyle={styles.quickActionText}
@@ -241,8 +241,8 @@ export default function LogFoodScreen() {
                     title="Barcode"
                     onPress={handleScanBarcode}
                     variant="secondary"
-                    size="md"
-                    icon={<QrCode size={18} color="#FFFFFF" />}
+                    size="lg"
+                    icon={<QrCode size={24} color="#FFFFFF" />}
                     iconPosition="left"
                     style={styles.quickActionButton}
                     textStyle={styles.quickActionText}
@@ -251,8 +251,8 @@ export default function LogFoodScreen() {
                     title="Manual"
                     onPress={handleManualEntry}
                     variant="success"
-                    size="md"
-                    icon={<Plus size={18} color="#FFFFFF" />}
+                    size="lg"
+                    icon={<Plus size={24} color="#FFFFFF" />}
                     iconPosition="left"
                     style={styles.quickActionButton}
                     textStyle={styles.quickActionText}
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   quickAddSubtitle: {
-    ...DesignSystem.typography.body,
+    ...DesignSystem.typography.body1,
     color: PremiumColors.text.secondary,
   },
   quickActions: {
@@ -379,12 +379,12 @@ const styles = StyleSheet.create({
   },
   quickActionButton: {
     flex: 1,
-    minHeight: 48,
+    minHeight: 64,
   },
   quickActionText: {
     color: '#FFFFFF',
     fontWeight: '600',
-    fontSize: 14,
+    fontSize: 16,
   },
   
   // Bottom Spacing
