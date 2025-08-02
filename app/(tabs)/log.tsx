@@ -221,7 +221,7 @@ export default function LogFoodScreen() {
                 if (sugar === 0) return null;
                 const percentage = totalSugar > 0 ? (sugar / totalSugar) * 100 : 0;
                 return (
-                  <EnterpriseCard key={meal} variant="surface" shadow="sm" style={styles.mealBreakdownCard}>
+                  <EnterpriseCard key={meal} variant="elevated" shadow="sm" style={styles.mealBreakdownCard}>
                     <View style={styles.mealBreakdownHeader}>
                       <Text style={styles.mealBreakdownTitle}>{meal.charAt(0).toUpperCase() + meal.slice(1)}</Text>
                       <Text style={styles.mealBreakdownValue}>{sugar.toFixed(1)}g</Text>
