@@ -219,7 +219,7 @@ export default function LogFoodScreen() {
             <EnterpriseHeader
               title="Quick Add"
               subtitle="Choose your preferred method to log food"
-              icon={<Plus size={24} color="white" />}
+              icon={<Plus size={24} color="#FFFFFF" />}
               variant="gradient"
             />
             
@@ -229,7 +229,7 @@ export default function LogFoodScreen() {
                 onPress={handleTakePhoto}
                 variant="primary"
                 size="sm"
-                icon={<Camera size={16} color="white" />}
+                icon={<Camera size={16} color="#FFFFFF" />}
                 iconPosition="left"
                 style={styles.quickActionButton}
               />
@@ -238,7 +238,7 @@ export default function LogFoodScreen() {
                 onPress={handleScanBarcode}
                 variant="secondary"
                 size="sm"
-                icon={<QrCode size={16} color="white" />}
+                icon={<QrCode size={16} color="#FFFFFF" />}
                 iconPosition="left"
                 style={styles.quickActionButton}
               />
@@ -247,7 +247,7 @@ export default function LogFoodScreen() {
                 onPress={handleManualEntry}
                 variant="success"
                 size="sm"
-                icon={<Plus size={16} color="white" />}
+                icon={<Plus size={16} color="#FFFFFF" />}
                 iconPosition="left"
                 style={styles.quickActionButton}
               />

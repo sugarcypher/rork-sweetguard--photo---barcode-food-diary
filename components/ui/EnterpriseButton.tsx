@@ -61,25 +61,25 @@ export default function EnterpriseButton({
       case 'primary':
         return {
           gradientColors: [PremiumColors.brand.primary, PremiumColors.brand.primaryLight] as const,
-          textColor: PremiumColors.text.primary,
+          textColor: '#FFFFFF',
           borderColor: 'transparent',
         };
       case 'secondary':
         return {
           gradientColors: [PremiumColors.brand.secondary, PremiumColors.brand.secondaryLight] as const,
-          textColor: PremiumColors.text.primary,
+          textColor: '#FFFFFF',
           borderColor: 'transparent',
         };
       case 'danger':
         return {
           gradientColors: [PremiumColors.semantic.error, PremiumColors.semantic.errorLight] as const,
-          textColor: PremiumColors.text.primary,
+          textColor: '#FFFFFF',
           borderColor: 'transparent',
         };
       case 'success':
         return {
           gradientColors: [PremiumColors.semantic.success, PremiumColors.semantic.successLight] as const,
-          textColor: PremiumColors.text.primary,
+          textColor: '#FFFFFF',
           borderColor: 'transparent',
         };
       case 'outline':
@@ -97,7 +97,7 @@ export default function EnterpriseButton({
       default:
         return {
           gradientColors: [PremiumColors.brand.primary, PremiumColors.brand.primaryLight] as const,
-          textColor: PremiumColors.text.primary,
+          textColor: '#FFFFFF',
           borderColor: 'transparent',
         };
     }
