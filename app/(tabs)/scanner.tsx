@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { Stack } from 'expo-router';
-import { Camera, Scan, Zap, AlertTriangle, Info } from 'lucide-react-native';
-import FoodScanner from '@/components/FoodScanner';
+import { Camera, Scan, AlertTriangle, Brain, Sparkles } from 'lucide-react-native';
+import IntelligentScanner from '@/components/IntelligentScanner';
 import colors from '@/constants/colors';
 import { useNavigation } from 'expo-router';
 import { useFoodLogStore } from '@/store/foodLogStore';
-import { findHiddenSugars } from '@/constants/hiddenSugarTypes';
 import { Food } from '@/types/food';
 
 export default function ScannerScreen() {
@@ -14,43 +13,13 @@ export default function ScannerScreen() {
   const navigation = useNavigation();
   const { addFood } = useFoodLogStore();
 
-  const handleFoodScanned = (foodData: any, metaSweetResult: any) => {
-    console.log('Food scanned:', foodData, metaSweetResult);
+  const handleFoodScanned = (food: Food) => {
+    console.log('Food scanned:', food);
     
-    // Find hidden sugars in ingredients
-    const ingredientsString = foodData.ingredients?.join(', ') || '';
-    const hiddenSugarTypes = findHiddenSugars(ingredientsString);
-    
-    // Create Food object
-    const food: Food = {
-      id: Date.now().toString(),
-      name: foodData.product_name,
-      brand: foodData.brand,
-      sugarPerServing: metaSweetResult.sugar_equivalent_g,
-      servingSize: `${foodData.serving_size_g}g`,
-      servingSizeGrams: foodData.serving_size_g,
-      hiddenSugars: hiddenSugarTypes.map(h => h.name),
-      hiddenSugarTypes: hiddenSugarTypes,
-      timestamp: Date.now(),
-      mealType: 'snack',
-      calories: foodData.nutrition_label.protein ? 
-        (foodData.nutrition_label.protein * 4) + 
-        (foodData.nutrition_label.fat * 9) + 
-        (foodData.nutrition_label.total_carbs * 4) : undefined,
-      carbs: foodData.nutrition_label.total_carbs,
-      protein: foodData.nutrition_label.protein,
-      fat: foodData.nutrition_label.fat,
-      ingredients: foodData.ingredients,
-      glycemicIndex: foodData.glycemic_index,
-      sugarEquivalent: metaSweetResult.sugar_equivalent_g
-    };
-    
-    addFood(food);
-    
-    // Show success alert with sugar analysis
+    // Show success alert
     Alert.alert(
       'Food Added Successfully!',
-      `${food.name} has been added to your log.\n\nSugar Impact: ${metaSweetResult.sugar_equivalent_g}g\n${hiddenSugarTypes.length > 0 ? `Hidden sugars found: ${hiddenSugarTypes.length}` : 'No hidden sugars detected'}`,
+      `${food.name} has been added to your log with ${food.sugarPerServing}g sugar per serving.`,
       [
         { text: 'View Log', onPress: () => navigation.navigate('log' as never) },
         { text: 'Scan Another', onPress: () => setScannerVisible(true) },
@@ -79,49 +48,49 @@ export default function ScannerScreen() {
             </View>
           </View>
           
-          <Text style={styles.title}>Advanced Food Scanner</Text>
+          <Text style={styles.title}>Intelligent Food Scanner</Text>
           <Text style={styles.subtitle}>
-            Scan barcodes to get comprehensive nutritional analysis with MetaSweet™ technology
+            AI-powered scanner that automatically detects barcodes, food labels, receipts, and ingredient lists
           </Text>
           
           <View style={styles.featuresContainer}>
             <View style={styles.feature}>
               <View style={styles.featureIcon}>
-                <Scan size={20} color={colors.primary} />
+                <Brain size={20} color={colors.primary} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={styles.featureTitle}>Smart Barcode Scanning</Text>
-                <Text style={styles.featureDescription}>Instant product recognition</Text>
+                <Text style={styles.featureTitle}>AI Content Detection</Text>
+                <Text style={styles.featureDescription}>Automatically identifies what you're scanning</Text>
               </View>
             </View>
             
             <View style={styles.feature}>
               <View style={styles.featureIcon}>
-                <Zap size={20} color={colors.accent} />
+                <Scan size={20} color={colors.accent} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={styles.featureTitle}>MetaSweet™ Analysis</Text>
-                <Text style={styles.featureDescription}>True sugar impact calculation</Text>
+                <Text style={styles.featureTitle}>Multi-Format Support</Text>
+                <Text style={styles.featureDescription}>Barcodes, labels, receipts, ingredients</Text>
               </View>
             </View>
             
             <View style={styles.feature}>
               <View style={styles.featureIcon}>
-                <AlertTriangle size={20} color={colors.warning} />
+                <Sparkles size={20} color={colors.warning} />
+              </View>
+              <View style={styles.featureContent}>
+                <Text style={styles.featureTitle}>Multiple Photos</Text>
+                <Text style={styles.featureDescription}>Capture different sides of packaging</Text>
+              </View>
+            </View>
+            
+            <View style={styles.feature}>
+              <View style={styles.featureIcon}>
+                <AlertTriangle size={20} color={colors.error} />
               </View>
               <View style={styles.featureContent}>
                 <Text style={styles.featureTitle}>Hidden Sugar Detection</Text>
                 <Text style={styles.featureDescription}>Identify disguised sweeteners</Text>
-              </View>
-            </View>
-            
-            <View style={styles.feature}>
-              <View style={styles.featureIcon}>
-                <Info size={20} color={colors.info} />
-              </View>
-              <View style={styles.featureContent}>
-                <Text style={styles.featureTitle}>Glycemic Impact</Text>
-                <Text style={styles.featureDescription}>Blood sugar response prediction</Text>
               </View>
             </View>
           </View>
@@ -133,24 +102,24 @@ export default function ScannerScreen() {
           >
             <View style={styles.scanButtonContent}>
               <Camera size={24} color="#000" />
-              <Text style={styles.scanButtonText}>Start Advanced Scan</Text>
+              <Text style={styles.scanButtonText}>Start Intelligent Scan</Text>
             </View>
           </TouchableOpacity>
           
           <View style={styles.infoCard}>
-            <Text style={styles.infoTitle}>Enterprise-Grade Analysis</Text>
+            <Text style={styles.infoTitle}>AI-Powered Food Analysis</Text>
             <Text style={styles.infoText}>
-              Our proprietary MetaSweet™ technology goes beyond basic nutrition labels to calculate the true metabolic impact of foods, including hidden sugars and glycemic response.
+              Our intelligent scanner uses advanced AI to automatically detect and process any food-related content. Simply point and shoot - the AI will determine what you're scanning and extract all relevant nutritional information.
             </Text>
           </View>
         </View>
       </ScrollView>
       
-      <FoodScanner 
+      <IntelligentScanner 
         visible={scannerVisible} 
         onClose={handleCloseScanner} 
         onFoodScanned={handleFoodScanned}
-        testId="food-scanner"
+        testId="intelligent-scanner"
       />
     </View>
   );
