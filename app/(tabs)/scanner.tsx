@@ -52,7 +52,7 @@ export default function ScannerScreen() {
       'Food Added Successfully!',
       `${food.name} has been added to your log.\n\nSugar Impact: ${metaSweetResult.sugar_equivalent_g}g\n${hiddenSugarTypes.length > 0 ? `Hidden sugars found: ${hiddenSugarTypes.length}` : 'No hidden sugars detected'}`,
       [
-        { text: 'View Log', onPress: () => navigation.navigate('(tabs)/log' as never) },
+        { text: 'View Log', onPress: () => navigation.navigate('log' as never) },
         { text: 'Scan Another', onPress: () => setScannerVisible(true) },
         { text: 'OK', style: 'default' }
       ]
