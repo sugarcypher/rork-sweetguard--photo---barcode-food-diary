@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,8 @@ import {
   Receipt,
   FileText,
   Package,
+  Upload,
+  Plus,
 } from 'lucide-react-native';
 import colors from '@/constants/colors';
 import { useFoodLogStore } from '@/store/foodLogStore';
@@ -63,6 +65,8 @@ export const IntelligentScanner: React.FC<IntelligentScannerProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [capturedPhotos, setCapturedPhotos] = useState<CapturedPhoto[]>([]);
   const [showReview, setShowReview] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<any>(null);
 
   const cameraRef = useRef<CameraView>(null);
   const { addFood } = useFoodLogStore();
@@ -267,6 +271,96 @@ Be thorough but concise. Focus on food and nutrition related information.`
     }
   };
 
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Remove data URL prefix to get just the base64 data
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const processImageFile = async (file: File) => {
+    try {
+      setIsProcessing(true);
+      console.log('[IntelligentScanner] Processing image file:', file.name);
+
+      const base64 = await convertFileToBase64(file);
+      const uri = URL.createObjectURL(file);
+
+      const capturedPhoto: CapturedPhoto = {
+        id: Date.now().toString(),
+        uri,
+        base64,
+        processed: false
+      };
+
+      setCapturedPhotos(prev => [...prev, capturedPhoto]);
+
+      // Analyze with AI
+      const analysis = await analyzeImageWithAI(base64);
+
+      // Update photo with analysis result
+      setCapturedPhotos(prev => 
+        prev.map(p => 
+          p.id === capturedPhoto.id 
+            ? { ...p, type: analysis.type, processed: true, data: analysis }
+            : p
+        )
+      );
+
+      await processAnalysisResult(analysis, uri);
+    } catch (error) {
+      console.error('[IntelligentScanner] File processing error:', error);
+      Alert.alert('Error', 'Failed to process image file. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleFileSelect = useCallback((files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) {
+        processImageFile(file);
+      } else {
+        console.log('Invalid file type:', file.type);
+      }
+    });
+  }, [processImageFile]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    handleFileSelect(e.dataTransfer.files);
+  }, [handleFileSelect]);
+
+  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileSelect(e.target.files);
+  }, [handleFileSelect]);
+
+  const openFileDialog = () => {
+    if (Platform.OS === 'web' && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const handleTakePhoto = async () => {
     if (!cameraRef.current || isProcessing) return;
 
@@ -274,30 +368,11 @@ Be thorough but concise. Focus on food and nutrition related information.`
       setIsProcessing(true);
       console.log('[IntelligentScanner] Taking photo...');
 
-      // For web, we'll simulate taking a photo
+      // For web, open file dialog instead of camera
       if (Platform.OS === 'web') {
-        const mockPhoto: CapturedPhoto = {
-          id: Date.now().toString(),
-          uri: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=',
-          base64: 'mock-base64-data',
-          processed: false
-        };
-        
-        setCapturedPhotos(prev => [...prev, mockPhoto]);
-        
-        // Simulate AI analysis
-        const analysis = await analyzeImageWithAI('mock-base64-data');
-        
-        // Update photo with analysis result
-        setCapturedPhotos(prev => 
-          prev.map(photo => 
-            photo.id === mockPhoto.id 
-              ? { ...photo, type: analysis.type, processed: true, data: analysis }
-              : photo
-          )
-        );
-        
-        await processAnalysisResult(analysis, mockPhoto.uri);
+        openFileDialog();
+        setIsProcessing(false);
+        return;
       } else {
         // Real camera implementation
         const photo = await cameraRef.current.takePictureAsync({
@@ -488,23 +563,142 @@ Be thorough but concise. Focus on food and nutrition related information.`
             </View>
             
             <View style={styles.webContent}>
-              <Camera size={64} color={colors.textSecondary} />
-              <Text style={styles.webTitle}>Camera Scanning</Text>
-              <Text style={styles.webMessage}>
-                Camera scanning is not available in the web version. This feature works best on mobile devices.
-              </Text>
+              {/* File Input for Web */}
+              {Platform.OS === 'web' && (
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  style={{ display: 'none' }}
+                  onChange={handleFileInputChange as any}
+                />
+              )}
               
-              <TouchableOpacity 
-                style={styles.demoButton}
-                onPress={handleTakePhoto}
-                disabled={isProcessing}
-              >
-                {isProcessing ? (
-                  <ActivityIndicator size="small" color="white" />
-                ) : (
-                  <Text style={styles.demoButtonText}>Try Demo Analysis</Text>
-                )}
-              </TouchableOpacity>
+              {/* Drag and Drop Zone */}
+              {Platform.OS === 'web' ? (
+                <div
+                  style={{
+                    width: '100%',
+                    maxWidth: 600,
+                    minHeight: 400,
+                    border: `2px dashed ${isDragOver ? colors.primary : colors.border}`,
+                    borderRadius: 16,
+                    backgroundColor: isDragOver || isProcessing ? colors.surface : colors.card,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 40,
+                    marginBottom: 20,
+                  }}
+                  onDragOver={handleDragOver as any}
+                  onDragLeave={handleDragLeave as any}
+                  onDrop={handleDrop as any}
+                >
+                  <View style={styles.dropZoneContent}>
+                    {isProcessing ? (
+                      <>
+                        <ActivityIndicator size="large" color={colors.primary} />
+                        <Text style={styles.processingTitle}>Processing Images...</Text>
+                        <Text style={styles.processingSubtitle}>AI is analyzing your photos</Text>
+                      </>
+                    ) : (
+                      <>
+                        <View style={styles.uploadIconContainer}>
+                          <Upload size={48} color={colors.primary} />
+                        </View>
+                        <Text style={styles.dropZoneTitle}>Drag & Drop Images Here</Text>
+                        <Text style={styles.dropZoneSubtitle}>
+                          Or click to select photos of food labels, barcodes, receipts, or ingredient lists
+                        </Text>
+                        
+                        <TouchableOpacity 
+                          style={styles.selectButton}
+                          onPress={openFileDialog}
+                          disabled={isProcessing}
+                        >
+                          <Plus size={20} color="white" />
+                          <Text style={styles.selectButtonText}>Select Images</Text>
+                        </TouchableOpacity>
+                        
+                        <View style={styles.supportedFormats}>
+                          <Text style={styles.formatsTitle}>Supported formats:</Text>
+                          <Text style={styles.formatsText}>JPG, PNG, WEBP • Multiple files supported</Text>
+                        </View>
+                      </>
+                    )}
+                  </View>
+                </div>
+              ) : (
+                <View 
+                  style={[
+                    styles.dropZone, 
+                    isDragOver && styles.dropZoneActive,
+                    isProcessing && styles.dropZoneProcessing
+                  ]}
+                >
+                  <View style={styles.dropZoneContent}>
+                    <View style={styles.uploadIconContainer}>
+                      <Upload size={48} color={colors.primary} />
+                    </View>
+                    <Text style={styles.dropZoneTitle}>Mobile Scanner</Text>
+                    <Text style={styles.dropZoneSubtitle}>
+                      Use the camera to scan food labels, barcodes, receipts, or ingredient lists
+                    </Text>
+                    
+                    <TouchableOpacity 
+                      style={styles.selectButton}
+                      onPress={handleTakePhoto}
+                      disabled={isProcessing}
+                    >
+                      <Camera size={20} color="white" />
+                      <Text style={styles.selectButtonText}>Open Camera</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+              
+              {/* Captured Photos Preview */}
+              {capturedPhotos.length > 0 && (
+                <View style={styles.webPhotosContainer}>
+                  <Text style={styles.webPhotosTitle}>Captured Photos ({capturedPhotos.length})</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.webPhotosScroll}>
+                    {capturedPhotos.map((photo) => (
+                      <View key={photo.id} style={styles.webPhotoCard}>
+                        <Image source={{ uri: photo.uri }} style={styles.webPhotoImage} />
+                        <View style={styles.webPhotoInfo}>
+                          <View style={styles.webPhotoTypeRow}>
+                            {getTypeIcon(photo.type || 'unknown')}
+                            <Text style={styles.webPhotoTypeText}>
+                              {getTypeLabel(photo.type || 'unknown')}
+                            </Text>
+                            {photo.processed && <Check size={12} color={colors.success} />}
+                          </View>
+                          {photo.data?.confidence && (
+                            <Text style={styles.webConfidenceText}>
+                              {Math.round(photo.data.confidence * 100)}%
+                            </Text>
+                          )}
+                        </View>
+                        <TouchableOpacity 
+                          style={styles.webRemoveButton}
+                          onPress={() => handleRetakePhoto(photo.id)}
+                        >
+                          <X size={14} color={colors.error} />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </ScrollView>
+                  
+                  <TouchableOpacity 
+                    style={styles.webFinishButton}
+                    onPress={handleFinishScanning}
+                  >
+                    <Check size={20} color="white" />
+                    <Text style={styles.webFinishButtonText}>Finish Scanning</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           </View>
         ) : (
@@ -904,6 +1098,170 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.primary,
     marginLeft: 4,
+  },
+  // Web-specific styles
+  dropZone: {
+    width: '100%',
+    maxWidth: 600,
+    minHeight: 400,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: colors.border,
+    borderRadius: 16,
+    backgroundColor: colors.card,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    marginBottom: 20,
+  },
+  dropZoneActive: {
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
+  },
+  dropZoneProcessing: {
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
+  },
+  dropZoneContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  uploadIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  dropZoneTitle: {
+    fontSize: 24,
+    fontWeight: '700' as const,
+    color: colors.text,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  dropZoneSubtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 30,
+    maxWidth: 400,
+  },
+  selectButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  selectButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600' as const,
+    marginLeft: 8,
+  },
+  supportedFormats: {
+    alignItems: 'center',
+  },
+  formatsTitle: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: colors.text,
+    marginBottom: 4,
+  },
+  formatsText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  processingTitle: {
+    fontSize: 20,
+    fontWeight: '600' as const,
+    color: colors.text,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  processingSubtitle: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  webPhotosContainer: {
+    width: '100%',
+    maxWidth: 600,
+  },
+  webPhotosTitle: {
+    fontSize: 18,
+    fontWeight: '600' as const,
+    color: colors.text,
+    marginBottom: 12,
+  },
+  webPhotosScroll: {
+    marginBottom: 20,
+  },
+  webPhotoCard: {
+    width: 120,
+    backgroundColor: colors.card,
+    borderRadius: 8,
+    padding: 8,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  webPhotoImage: {
+    width: '100%',
+    height: 80,
+    borderRadius: 6,
+    backgroundColor: colors.surface,
+    marginBottom: 8,
+  },
+  webPhotoInfo: {
+    marginBottom: 8,
+  },
+  webPhotoTypeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  webPhotoTypeText: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: colors.text,
+    marginLeft: 4,
+    flex: 1,
+  },
+  webConfidenceText: {
+    fontSize: 10,
+    color: colors.textSecondary,
+  },
+  webRemoveButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  webFinishButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.success,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  webFinishButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600' as const,
+    marginLeft: 8,
   },
 });
 
