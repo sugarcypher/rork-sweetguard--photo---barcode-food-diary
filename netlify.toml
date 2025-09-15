@@ -1,5 +1,5 @@
 [build]
-  command = "node build-web.js"
+  command = "chmod +x ./build-netlify.sh && ./build-netlify.sh"
   functions = "netlify/functions"
   publish = "dist"
 
