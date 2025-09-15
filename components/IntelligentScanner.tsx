@@ -29,6 +29,7 @@ import colors from '@/constants/colors';
 import { useFoodLogStore } from '@/store/foodLogStore';
 import { Food } from '@/types/food';
 import { findHiddenSugars } from '@/constants/hiddenSugarTypes';
+import { resolveFoodData } from '@/utils/foodDataResolver';
 
 interface IntelligentScannerProps {
   visible: boolean;
@@ -179,14 +180,69 @@ Be thorough but concise. Focus on food and nutrition related information.`
 
   const processBarcodeData = async (data: any) => {
     if (data.barcode) {
-      // Use existing barcode lookup logic
-      Alert.alert(
-        'Barcode Detected',
-        `Found barcode: ${data.barcode}. This would normally trigger a product lookup.`,
-        [
-          { text: 'OK' }
-        ]
-      );
+      console.log('[IntelligentScanner] Processing barcode:', data.barcode);
+      
+      try {
+        setIsProcessing(true);
+        const result = await resolveFoodData(data.barcode);
+        
+        if (result.success && result.foodData) {
+          // Convert food data resolver format to our Food type
+          const food: Food = {
+            id: Date.now().toString(),
+            name: result.foodData.product_name,
+            brand: result.foodData.brand,
+            sugarPerServing: result.foodData.nutrition_facts.sugars_g,
+            servingSize: `${result.foodData.serving_size_g}g`,
+            servingSizeGrams: result.foodData.serving_size_g,
+            hiddenSugars: [],
+            hiddenSugarTypes: [],
+            timestamp: Date.now(),
+            mealType: 'snack',
+            calories: result.foodData.nutrition_facts.calories,
+            carbs: result.foodData.nutrition_facts.total_carbs_g,
+            protein: result.foodData.nutrition_facts.protein_g,
+            fat: result.foodData.nutrition_facts.fat_g,
+            ingredients: result.foodData.ingredients || [],
+          };
+          
+          // Find hidden sugars if ingredients are available
+          if (food.ingredients && food.ingredients.length > 0) {
+            const ingredientsString = food.ingredients.join(', ');
+            const hiddenSugarTypes = findHiddenSugars(ingredientsString);
+            food.hiddenSugars = hiddenSugarTypes.map(h => h.name);
+            food.hiddenSugarTypes = hiddenSugarTypes;
+          }
+          
+          addFood(food);
+          
+          Alert.alert(
+            'Product Found!',
+            `Added "${food.name}" to your food log with ${food.sugarPerServing}g sugar per serving.`,
+            [
+              { text: 'View Log', onPress: () => onClose() },
+              { text: 'OK' }
+            ]
+          );
+          
+          if (onFoodScanned) {
+            onFoodScanned(food);
+          }
+        } else {
+          Alert.alert(
+            'Product Not Found',
+            `Barcode ${data.barcode} was detected but no product information was found. ${result.error || 'Try scanning a different product.'}`
+          );
+        }
+      } catch (error) {
+        console.error('[IntelligentScanner] Barcode lookup error:', error);
+        Alert.alert(
+          'Lookup Failed',
+          'Failed to look up product information. Please check your internet connection and try again.'
+        );
+      } finally {
+        setIsProcessing(false);
+      }
     } else {
       Alert.alert('Barcode', 'Barcode detected but number could not be extracted clearly.');
     }
@@ -271,27 +327,31 @@ Be thorough but concise. Focus on food and nutrition related information.`
     }
   };
 
-  const convertFileToBase64 = (file: File): Promise<string> => {
+  const convertFileToBase64 = (file: any): Promise<string> => {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        // Remove data URL prefix to get just the base64 data
-        const base64 = result.split(',')[1];
-        resolve(base64);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
+      if (Platform.OS === 'web' && typeof FileReader !== 'undefined') {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result as string;
+          // Remove data URL prefix to get just the base64 data
+          const base64 = result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      } else {
+        reject(new Error('FileReader not available'));
+      }
     });
   };
 
-  const processImageFile = async (file: File) => {
+  const processImageFile = async (file: any) => {
     try {
       setIsProcessing(true);
       console.log('[IntelligentScanner] Processing image file:', file.name);
 
       const base64 = await convertFileToBase64(file);
-      const uri = URL.createObjectURL(file);
+      const uri = Platform.OS === 'web' ? URL.createObjectURL(file) : file.uri;
 
       const capturedPhoto: CapturedPhoto = {
         id: Date.now().toString(),
@@ -323,11 +383,11 @@ Be thorough but concise. Focus on food and nutrition related information.`
     }
   };
 
-  const handleFileSelect = useCallback((files: FileList | null) => {
+  const handleFileSelect = useCallback((files: any) => {
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach(file => {
-      if (file.type.startsWith('image/')) {
+    Array.from(files).forEach((file: any) => {
+      if (file.type && file.type.startsWith('image/')) {
         processImageFile(file);
       } else {
         console.log('Invalid file type:', file.type);
@@ -335,24 +395,32 @@ Be thorough but concise. Focus on food and nutrition related information.`
     });
   }, [processImageFile]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
+  const handleDragOver = useCallback((e: any) => {
+    if (Platform.OS === 'web') {
+      e.preventDefault();
+      setIsDragOver(true);
+    }
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
+  const handleDragLeave = useCallback((e: any) => {
+    if (Platform.OS === 'web') {
+      e.preventDefault();
+      setIsDragOver(false);
+    }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    handleFileSelect(e.dataTransfer.files);
+  const handleDrop = useCallback((e: any) => {
+    if (Platform.OS === 'web') {
+      e.preventDefault();
+      setIsDragOver(false);
+      handleFileSelect(e.dataTransfer.files);
+    }
   }, [handleFileSelect]);
 
-  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFileSelect(e.target.files);
+  const handleFileInputChange = useCallback((e: any) => {
+    if (Platform.OS === 'web') {
+      handleFileSelect(e.target.files);
+    }
   }, [handleFileSelect]);
 
   const openFileDialog = () => {
@@ -570,31 +638,24 @@ Be thorough but concise. Focus on food and nutrition related information.`
                   type="file"
                   accept="image/*"
                   multiple
-                  style={{ display: 'none' }}
-                  onChange={handleFileInputChange as any}
+                  style={styles.hiddenInput}
+                  onChange={handleFileInputChange}
                 />
               )}
               
               {/* Drag and Drop Zone */}
-              {Platform.OS === 'web' ? (
-                <div
-                  style={{
-                    width: '100%',
-                    maxWidth: 600,
-                    minHeight: 400,
-                    border: `2px dashed ${isDragOver ? colors.primary : colors.border}`,
-                    borderRadius: 16,
-                    backgroundColor: isDragOver || isProcessing ? colors.surface : colors.card,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 40,
-                    marginBottom: 20,
-                  }}
-                  onDragOver={handleDragOver as any}
-                  onDragLeave={handleDragLeave as any}
-                  onDrop={handleDrop as any}
-                >
+              <View 
+                style={[
+                  styles.dropZone, 
+                  isDragOver && styles.dropZoneActive,
+                  isProcessing && styles.dropZoneProcessing
+                ]}
+                {...(Platform.OS === 'web' ? {
+                  onDragOver: handleDragOver as any,
+                  onDragLeave: handleDragLeave as any,
+                  onDrop: handleDrop as any
+                } : {})}
+              >
                   <View style={styles.dropZoneContent}>
                     {isProcessing ? (
                       <>
@@ -628,35 +689,7 @@ Be thorough but concise. Focus on food and nutrition related information.`
                       </>
                     )}
                   </View>
-                </div>
-              ) : (
-                <View 
-                  style={[
-                    styles.dropZone, 
-                    isDragOver && styles.dropZoneActive,
-                    isProcessing && styles.dropZoneProcessing
-                  ]}
-                >
-                  <View style={styles.dropZoneContent}>
-                    <View style={styles.uploadIconContainer}>
-                      <Upload size={48} color={colors.primary} />
-                    </View>
-                    <Text style={styles.dropZoneTitle}>Mobile Scanner</Text>
-                    <Text style={styles.dropZoneSubtitle}>
-                      Use the camera to scan food labels, barcodes, receipts, or ingredient lists
-                    </Text>
-                    
-                    <TouchableOpacity 
-                      style={styles.selectButton}
-                      onPress={handleTakePhoto}
-                      disabled={isProcessing}
-                    >
-                      <Camera size={20} color="white" />
-                      <Text style={styles.selectButtonText}>Open Camera</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
+              </View>
               
               {/* Captured Photos Preview */}
               {capturedPhotos.length > 0 && (
@@ -1262,6 +1295,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600' as const,
     marginLeft: 8,
+  },
+  hiddenInput: {
+    display: 'none',
   },
 });
 

@@ -4,13 +4,13 @@ import { Stack } from 'expo-router';
 import { Camera, Scan, AlertTriangle, Brain, Sparkles } from 'lucide-react-native';
 import IntelligentScanner from '@/components/IntelligentScanner';
 import colors from '@/constants/colors';
-import { useNavigation } from 'expo-router';
+import { router } from 'expo-router';
 import { useFoodLogStore } from '@/store/foodLogStore';
 import { Food } from '@/types/food';
 
 export default function ScannerScreen() {
   const [scannerVisible, setScannerVisible] = useState(false);
-  const navigation = useNavigation();
+
   const { addFood } = useFoodLogStore();
 
   const handleFoodScanned = (food: Food) => {
@@ -21,7 +21,7 @@ export default function ScannerScreen() {
       'Food Added Successfully!',
       `${food.name} has been added to your log with ${food.sugarPerServing}g sugar per serving.`,
       [
-        { text: 'View Log', onPress: () => navigation.navigate('log' as never) },
+        { text: 'View Log', onPress: () => router.push('/(tabs)/log') },
         { text: 'Scan Another', onPress: () => setScannerVisible(true) },
         { text: 'OK', style: 'default' }
       ]
