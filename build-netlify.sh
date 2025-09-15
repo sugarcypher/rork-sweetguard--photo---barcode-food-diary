@@ -6,6 +6,9 @@ set -e  # Exit on any error
 echo "Node version: $(node --version)"
 echo "NPM version: $(npm --version)"
 
+echo "Cleaning npm cache..."
+npm cache clean --force
+
 echo "Installing dependencies with legacy peer deps..."
 npm install --legacy-peer-deps --no-audit --no-fund --force
 
