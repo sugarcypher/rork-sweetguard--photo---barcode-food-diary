@@ -25,11 +25,22 @@ try {
 
   // Install dependencies with legacy peer deps and force flag
   console.log('Installing dependencies...');
-  execSync('npm install --legacy-peer-deps --force --no-audit --no-fund', { 
-    stdio: 'inherit',
-    cwd: process.cwd(),
-    env: { ...process.env, NODE_ENV: 'production' }
-  });
+  try {
+    // Try npm ci first (faster for CI)
+    execSync('npm ci --legacy-peer-deps --force --no-audit --no-fund', { 
+      stdio: 'inherit',
+      cwd: process.cwd(),
+      env: { ...process.env, NODE_ENV: 'production' }
+    });
+  } catch (_ciError) {
+    console.warn('npm ci failed, falling back to npm install...');
+    // Fallback to npm install if ci fails
+    execSync('npm install --legacy-peer-deps --force --no-audit --no-fund', { 
+      stdio: 'inherit',
+      cwd: process.cwd(),
+      env: { ...process.env, NODE_ENV: 'production' }
+    });
+  }
 
   // Build for web
   console.log('Building for web...');

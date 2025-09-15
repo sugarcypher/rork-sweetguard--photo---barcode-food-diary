@@ -1,11 +1,13 @@
 [build]
-  command = "node build-web.js"
+  command = "npm run build:web:netlify"
   functions = "netlify/functions"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18.20.4"
   NPM_FLAGS = "--legacy-peer-deps --force"
+  EXPO_NO_TELEMETRY = "1"
+  CI = "true"
 
 [[redirects]]
   from = "/*"
