@@ -1,11 +1,11 @@
 [build]
-  command = "chmod +x build-netlify.sh && ./build-netlify.sh"
+  command = "node build-web.js"
   functions = "netlify/functions"
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "18.20.7"
-  NPM_FLAGS = "--legacy-peer-deps"
+  NODE_VERSION = "18.20.4"
+  NPM_FLAGS = "--legacy-peer-deps --force"
 
 [[redirects]]
   from = "/*"
