@@ -1,0 +1,13 @@
+[build]
+  command = "chmod +x build-netlify.sh && ./build-netlify.sh"
+  functions = "netlify/functions"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18.20.7"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
