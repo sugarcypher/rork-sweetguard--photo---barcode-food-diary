@@ -85,7 +85,7 @@ export default function SplashScreen() {
       <View style={styles.content}>
         <View style={styles.iconContainer}>
           <Image 
-            source={{ uri: 'https://r2-pub.rork.com/attachments/zbqmpigoa27m6qt9ms38n' }}
+            source={{ uri: 'https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/c6i7mg8mq8es5j8zp5e8u' }}
             style={styles.logo}
             resizeMode="contain"
           />

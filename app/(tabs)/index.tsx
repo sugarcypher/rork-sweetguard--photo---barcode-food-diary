@@ -98,7 +98,7 @@ export default function TabsIndex() {
         <View style={styles.heroContainer}>
           <View style={styles.logoHero}>
             <Image
-              source={{ uri: 'https://r2-pub.rork.com/attachments/hoc92s8e3ut1pf75jyxn7' }}
+              source={{ uri: 'https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/c6i7mg8mq8es5j8zp5e8u' }}
               style={styles.heroLogo}
               resizeMode="contain"
             />

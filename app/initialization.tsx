@@ -86,7 +86,7 @@ export default function InitializationScreen() {
         <View style={styles.logoContainer}>
           <View style={styles.logoGlow} />
           <Image 
-            source={{ uri: 'https://r2-pub.rork.com/attachments/9lyjtgl4i9xajqkfxrdlx' }}
+            source={{ uri: 'https://pub-e001eb4506b145aa938b5d3badbff6a5.r2.dev/attachments/c6i7mg8mq8es5j8zp5e8u' }}
             style={styles.logo}
             resizeMode="contain"
           />
